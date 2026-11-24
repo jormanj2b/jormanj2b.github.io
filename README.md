@@ -21,3 +21,10 @@ Los proyectos 02–06 son negocios ficticios. Las fotos de esas demos se generar
 - **Contacto**: el número de teléfono no se publica en el sitio. El contacto va por Freelancer, Instagram y el formulario de consulta.
 - **Precios «desde»**: están en la sección `#servicios`. Para ocultarlos, borra los párrafos con la clase `from`.
 - **Imagen para redes**: `img/og.jpg`, 1200×630.
+
+## Agenda de consultas
+La sección `#agenda` muestra horarios de lunes a viernes, de 9:00 a 18:00 hora de Venezuela, cada 30 minutos, con 3 horas de anticipación mínima. El visitante los ve en su hora local. Se cambia en `CFG`, al inicio de `main.js`.
+
+Hoy el formulario no envía nada a ningún servidor. Arma un resumen, lo copia al portapapeles y ofrece enviarlo por Instagram (ig.me/m/jorman_j2b) o Freelancer. Si más adelante quieres recibir las solicitudes directo en tu correo, crea un formulario gratis en Formspree o similar, pega su URL en `CFG.ENDPOINT` y añade ese dominio a `connect-src` en la CSP de `index.html`.
+
+El número de teléfono no se publica en el sitio.
