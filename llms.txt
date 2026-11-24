@@ -1,0 +1,20 @@
+# Jorman Bravo · Desarrollador web freelance
+
+> Diseño, programo y publico sitios web completos para negocios locales (panaderías, cafés, restaurantes, barberías y más): catálogos con pedidos, reservas, tiendas y landings. Trabajo en remoto desde Venezuela, en español e inglés, para clientes de España, EE. UU. y Latinoamérica.
+
+Los sitios están hechos en HTML, CSS y JavaScript sin frameworks, publicados en GitHub Pages, con el código a nombre del cliente.
+
+## Portafolio y contacto
+
+- [Página principal, servicios, planes y agenda de la consulta gratis de 15 minutos](https://jormanj2b.github.io/)
+- [Perfil en Freelancer](https://www.freelancer.es/u/Jormanbm)
+- [Instagram](https://www.instagram.com/jorman_j2b/)
+
+## Proyectos de muestra
+
+- [Laborathorno: catálogo digital con pedidos por WhatsApp](https://jormanj2b.github.io/laborathorno-demo/)
+- [Barbería Corte Norte: página de reservas (demo)](https://jormanj2b.github.io/demo-barberia/)
+- [Café Almendro: carta digital con QR (demo)](https://jormanj2b.github.io/demo-cafe/)
+- [Barro Lento: tienda online (demo)](https://jormanj2b.github.io/demo-tienda/)
+- [Ribera & Ochoa Asesores: sitio corporativo (demo)](https://jormanj2b.github.io/demo-asesoria/)
+- [Forja Entrenamiento: landing de conversión (demo)](https://jormanj2b.github.io/demo-gimnasio/)
