@@ -102,3 +102,7 @@ h3{font-weight:600;font-size:1.5rem;letter-spacing:-.01em}
 .foot p{margin:0}
 .small{font-size:.85rem}
 .go span[aria-hidden]{margin-left:.35rem}
+.me{display:flex;align-items:center;gap:1rem;margin:0 0 1.6rem}
+.me img{width:96px;height:96px;border-radius:50%;object-fit:cover;border:2px solid var(--ink)}
+.me figcaption{display:flex;flex-direction:column;gap:.2rem}
+.me figcaption span{color:var(--muted);font-size:.95rem}

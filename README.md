@@ -18,6 +18,6 @@ Los proyectos 02–06 son negocios ficticios. Las fotos de esas demos se generar
 
 ## Cambios frecuentes
 - **Nombre de marca** (p. ej. «JormanWebs»): busca `Jorman Bravo · Desarrollo web` y `brand-name` en `index.html`. Aparece en el `<title>`, las metas OG, el JSON-LD, la cabecera y el pie. Cambia también las iniciales `JB` de `brand-mark` y `favicon.svg`.
-- **WhatsApp de trabajo**: en `index.html` busca el comentario `WhatsApp de trabajo`. Reemplaza `NUMERO` por tu número con código de país, sin `+` ni espacios, y quita los comentarios.
+- **WhatsApp de trabajo**: el botón de contacto apunta a `wa.me/[número retirado]` con un mensaje ya escrito. Para cambiarlo, edita `_tools/hub-template.html` (o directamente `index.html`).
 - **Precios «desde»**: están en la sección `#servicios`. Para ocultarlos, borra los párrafos con la clase `from`.
 - **Imagen para redes**: `img/og.jpg`, 1200×630.
