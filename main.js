@@ -7,7 +7,7 @@
   var CFG = {
     tzOffset: -4,            // Venezuela (UTC-4, sin horario de verano)
     days: [1, 2, 3, 4, 5, 6], // lunes a sábado
-    start: 7, end: 21,       // de 7:00 a 21:00, hora de Venezuela (cubre mañana en EE. UU. y tarde-noche en España)
+    start: 4, end: 21,       // de 4:00 a 21:00, hora de Venezuela (cubre la mañana en España y todo el día en EE. UU.)
     step: 30,                // minutos entre horarios
     show: 10,                // días hábiles que se muestran
     minLeadHours: 3,         // no ofrecer horarios con menos de 3 h de anticipación

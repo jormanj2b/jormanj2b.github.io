@@ -23,7 +23,7 @@ Los proyectos 02–06 son negocios ficticios. Las fotos de esas demos se generar
 - **Imagen para redes**: `img/og.jpg`, 1200×630.
 
 ## Agenda de consultas
-La sección `#agenda` muestra horarios de lunes a sábado, de 7:00 a 21:00 hora de Venezuela (UTC-4), cada 30 minutos, con 3 horas de anticipación mínima. El visitante los ve en su hora local. Se cambia en `CFG`, al inicio de `main.js`.
+La sección `#agenda` muestra horarios de lunes a sábado, de 4:00 a 21:00 hora de Venezuela (UTC-4), cada 30 minutos, con 3 horas de anticipación mínima. El visitante los ve en su hora local. Se cambia en `CFG`, al inicio de `main.js`.
 
 Hoy el formulario no envía nada a ningún servidor. Arma un resumen, lo copia al portapapeles y ofrece enviarlo por Instagram (ig.me/m/jorman_j2b) o Freelancer. Si más adelante quieres recibir las solicitudes directo en tu correo, crea un formulario gratis en Formspree o similar, pega su URL en `CFG.ENDPOINT` y añade ese dominio a `connect-src` en la CSP de `index.html`.
 
