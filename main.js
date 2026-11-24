@@ -74,6 +74,14 @@
 
   var idle = window.requestIdleCallback || function (fn) { return setTimeout(fn, 200); };
 
+  /* Aviso de cookies (Aceptar todas / Rechazar todas / Configurar). Se carga desde aquí porque index.html se genera con una plantilla. */
+  if (!document.querySelector('script[src*="cookies.js"]')) {
+    var ck = document.createElement('script');
+    ck.src = 'cookies.js?v=1'; ck.defer = true;
+    ck.dataset.key = 'raiz'; ck.dataset.owner = 'Jorman Bravo'; ck.dataset.accent = '#1E33A8';
+    document.head.appendChild(ck);
+  }
+
   /* ---------- Reveal al hacer scroll ---------- */
   idle(function () {
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
