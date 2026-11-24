@@ -2,7 +2,7 @@
 
 Sitio de portafolio en https://jormanj2b.github.io/: proyectos, servicios, precios orientativos, proceso, garantía, mantenimiento y contacto.
 
-HTML y CSS, sin JavaScript ni dependencias. Las fuentes están alojadas en el propio repo (Bricolage Grotesque e IBM Plex Mono, licencia OFL).
+HTML, CSS y un archivo de JavaScript propio (`main.js`), sin librerías externas. Las fuentes están alojadas en el propio repo (Bricolage Grotesque e IBM Plex Mono, licencia OFL).
 
 ## Proyectos
 | # | Proyecto | Tipo | Demo | Repo |
