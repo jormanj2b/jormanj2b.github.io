@@ -234,3 +234,14 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
 @media (max-width:600px){.hero-facts{grid-template-columns:1fr 1fr 1fr;gap:.6rem}.hero-facts span{font-size:.8rem}.hero-cta .btn{width:100%}}
 @media (max-width:600px){.kicker{font-size:.68rem;letter-spacing:.04em}.hero-art{max-width:380px}}
+/* otros servicios */
+.extras{margin-top:2.4rem;display:grid;gap:1.4rem;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:1.6rem}
+@media (min-width:900px){.extras{grid-template-columns:1fr 1.6fr;padding:2.2rem;gap:2.4rem}}
+.extras-head h3{font-size:1.6rem;margin-bottom:.6rem}
+.extras-head p{color:var(--muted);margin:0}
+.extras-list{list-style:none;margin:0;padding:0}
+.extras-list li{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding:.7rem 0;border-bottom:1px dashed var(--line)}
+.extras-list li:last-child{border-bottom:0}
+.extras-list b{white-space:nowrap;font-variant-numeric:tabular-nums}
+.go-row{display:flex;flex-wrap:wrap;gap:.6rem}
+.go-alt{background:transparent;color:var(--pfg);box-shadow:inset 0 0 0 2px var(--pfg)}
