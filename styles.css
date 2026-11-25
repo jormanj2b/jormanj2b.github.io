@@ -219,6 +219,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
 .contact h2{font-size:clamp(2.2rem,5.4vw,4rem);max-width:16ch}
 .contact .lead{margin:0 auto;text-align:center}
 .contact-links{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center;margin-top:.6rem}
+.agenda-intro .contact-links{justify-content:flex-start;margin-top:.2rem}
 .foot{border-top:1px solid var(--line);padding:2rem clamp(1rem,4vw,2.5rem);max-width:var(--wrap);margin:0 auto;display:grid;gap:.5rem;color:var(--muted);font-size:.95rem}
 .foot .small{font-size:.85rem}
 

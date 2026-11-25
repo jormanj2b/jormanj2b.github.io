@@ -18,13 +18,11 @@ Los proyectos 02–06 son negocios ficticios. Las fotos de esas demos se generar
 
 ## Cambios frecuentes
 - **Nombre de marca** (p. ej. «JormanWebs»): busca `Jorman Bravo · Desarrollo web` y `brand-name` en `index.html`. Aparece en el `<title>`, las metas OG, el JSON-LD, la cabecera y el pie. Cambia también las iniciales `JB` de `brand-mark` y `favicon.svg`.
-- **Contacto**: el número de teléfono no se publica en el sitio. El contacto va por Freelancer, Instagram y el formulario de consulta.
+- **Contacto**: el número de teléfono no se publica en el sitio. El contacto va por el formulario (`#contacto`), Freelancer o Workana. Instagram aparece como canal opcional. Los enlaces viejos a `#agenda` redirigen a `#contacto`.
 - **Precios «desde»**: están en la sección `#servicios`. Para ocultarlos, borra los párrafos con la clase `from`.
 - **Imagen para redes**: `img/og.jpg`, 1200×630.
 
-## Agenda de consultas
-La sección `#agenda` muestra horarios de lunes a sábado, de 4:00 a 21:00 hora de Venezuela (UTC-4), cada 30 minutos, con 3 horas de anticipación mínima. El visitante los ve en su hora local. Se cambia en `CFG`, al inicio de `main.js`.
-
-Hoy el formulario no envía nada a ningún servidor. Arma un resumen, lo copia al portapapeles y ofrece enviarlo por Instagram (ig.me/m/jorman_j2b) o Freelancer. Si más adelante quieres recibir las solicitudes directo en tu correo, crea un formulario gratis en Formspree o similar, pega su URL en `CFG.ENDPOINT` y añade ese dominio a `connect-src` en la CSP de `index.html`.
+## Formulario de contacto
+La sección `#contacto` es un formulario (nombre, negocio, tipo de sitio, canal y dato de contacto). No hay agenda ni reserva de llamada. Hoy el formulario no envía nada a ningún servidor. Arma un resumen, lo copia al portapapeles y ofrece enviarlo por Freelancer, Workana o Instagram (ig.me/m/jorman_j2b). Si más adelante quieres recibir las solicitudes directo en tu correo, crea un formulario gratis en Formspree o similar, pega su URL en `CFG.ENDPOINT` y añade ese dominio a `connect-src` en la CSP de `index.html`.
 
 El número de teléfono no se publica en el sitio.

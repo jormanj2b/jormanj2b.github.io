@@ -1,20 +1,14 @@
-/* Portafolio · Jorman Bravo — animaciones de entrada y agenda de consultas.
+/* Portafolio · Jorman Bravo — animaciones de entrada y formulario de contacto.
    Sin dependencias. Nada se envía a ningún servidor salvo que configures ENDPOINT. */
 (function () {
   'use strict';
 
-  /* ---------- Configuración de la agenda ---------- */
+  /* ---------- Configuración del formulario ---------- */
   var CFG = {
-    tzOffset: -4,            // Venezuela (UTC-4, sin horario de verano)
-    days: [1, 2, 3, 4, 5, 6], // lunes a sábado
-    start: 4, end: 21,       // de 4:00 a 21:00, hora de Venezuela (cubre la mañana en España y todo el día en EE. UU.)
-    step: 30,                // minutos entre horarios
-    show: 10,                // días hábiles que se muestran
-    minLeadHours: 3,         // no ofrecer horarios con menos de 3 h de anticipación
     ENDPOINT: ''             // opcional: URL tipo Formspree. Si la usas, añádela a connect-src en la CSP.
   };
 
-  // Validación de campos de la agenda: ayuda a quien escribe y evita datos raros. La protección de verdad es que
+  // Validación de campos: ayuda a quien escribe y evita datos raros. La protección de verdad es que
   // todo lo que escribe el usuario se muestra con textContent, nunca como HTML.
   var NAME_RE = /^\p{L}(?:[\p{L}\p{M}]|['’ -](?=\p{L}))*$/u;
   function clean(v) { return String(v || '').normalize('NFC').replace(/[\u0000-\u001F\u007F-\u009F\u200B-\u200F\u2028\u2029\uFEFF]/g, ' ').replace(/\s+/g, ' ').trim(); }
@@ -82,6 +76,16 @@
     document.head.appendChild(ck);
   }
 
+  /* Enlaces viejos a #agenda caen en el formulario de contacto. */
+  function fixLegacyHash() {
+    if (location.hash !== '#agenda') return;
+    var el = document.getElementById('contacto');
+    if (history.replaceState) history.replaceState(null, '', '#contacto');
+    if (el) el.scrollIntoView();
+  }
+  fixLegacyHash();
+  window.addEventListener('hashchange', fixLegacyHash);
+
   /* ---------- Reveal al hacer scroll ---------- */
   idle(function () {
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -103,25 +107,12 @@
   }
   });
 
-  /* ---------- Agenda (se prepara cuando se acerca a la pantalla) ---------- */
-  var form = document.getElementById('booking');
+  /* ---------- Formulario de contacto ---------- */
+  var form = document.getElementById('contacto-form');
   if (!form) return;
-  var started = false;
-  function startAgenda() { if (started) return; started = true; agenda(); }
-  if ('IntersectionObserver' in window) {
-    var aio = new IntersectionObserver(function (en) { if (en.some(function (x) { return x.isIntersecting; })) { aio.disconnect(); startAgenda(); } }, { rootMargin: '900px 0px' });
-    aio.observe(form);
-    window.addEventListener('hashchange', function () { if (location.hash === '#agenda') startAgenda(); });
-  } else startAgenda();
 
-  function agenda() {
-  var daysEl = document.getElementById('days'), slotsEl = document.getElementById('slots');
-  var errEl = document.getElementById('form-error'), booked = document.getElementById('booked');
+  var errEl = document.getElementById('form-error'), sent = document.getElementById('enviado');
   var summaryEl = document.getElementById('summary');
-  var lang = 'es';
-  var userTz = '';
-  try { userTz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
-  document.getElementById('tz').textContent = userTz ? '· tu hora (' + userTz.replace(/_/g, ' ') + ')' : '· tu hora local';
 
   function el(tag, attrs, kids) {
     var n = document.createElement(tag);
@@ -129,81 +120,24 @@
     (kids || []).forEach(function (c) { n.appendChild(c); });
     return n;
   }
-  // Fecha (UTC) de un horario en Venezuela
-  function vetToUtc(y, m, d, h, min) { return new Date(Date.UTC(y, m, d, h - CFG.tzOffset, min)); }
-  function vetParts(date) { var t = new Date(date.getTime() + CFG.tzOffset * 3600e3); return { y: t.getUTCFullYear(), m: t.getUTCMonth(), d: t.getUTCDate(), wd: t.getUTCDay() }; }
-  var fmtDayShort = new Intl.DateTimeFormat(lang, { weekday: 'short', timeZone: 'UTC' });
-  var fmtTime = new Intl.DateTimeFormat(lang, { hour: '2-digit', minute: '2-digit' });
-  var fmtLong = new Intl.DateTimeFormat(lang, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
-  var fmtVet = new Intl.DateTimeFormat(lang, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: 'America/Caracas' });
-
-  function buildDays() {
-    var now = new Date(), out = [], p = vetParts(now), i = 0;
-    while (out.length < CFG.show && i < 30) {
-      var base = new Date(Date.UTC(p.y, p.m, p.d + i)); i++;
-      var y = base.getUTCFullYear(), m = base.getUTCMonth(), d = base.getUTCDate(), wd = base.getUTCDay();
-      if (CFG.days.indexOf(wd) < 0) continue;
-      var slots = [];
-      for (var t = CFG.start * 60; t < CFG.end * 60; t += CFG.step) {
-        var at = vetToUtc(y, m, d, Math.floor(t / 60), t % 60);
-        if (at.getTime() - now.getTime() >= CFG.minLeadHours * 3600e3) slots.push(at);
-      }
-      if (slots.length) out.push({ label: base, slots: slots });
-    }
-    return out;
-  }
-  var DAYS = buildDays(), chosenDay = null, chosenSlot = null;
-
-  function radio(group, btn) {
-    group.querySelectorAll('[role=radio]').forEach(function (b) { b.setAttribute('aria-checked', 'false'); b.tabIndex = -1; });
-    btn.setAttribute('aria-checked', 'true'); btn.tabIndex = 0;
-  }
-  function arrows(group) {
-    group.addEventListener('keydown', function (e) {
-      if (['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].indexOf(e.key) < 0) return;
-      var items = Array.prototype.slice.call(group.querySelectorAll('[role=radio]'));
-      var i = items.indexOf(document.activeElement); if (i < 0) return;
-      e.preventDefault();
-      var n = items[(i + (e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length];
-      n.focus(); n.click();
-    });
-  }
-  daysEl.textContent = '';
-  DAYS.forEach(function (day, idx) {
-    var b = el('button', { type: 'button', 'class': 'day', role: 'radio', 'aria-checked': 'false', tabindex: idx === 0 ? '0' : '-1',
-      'aria-label': new Intl.DateTimeFormat(lang, { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }).format(day.label) },
-      [el('small', { text: fmtDayShort.format(day.label).replace('.', '') }), el('b', { text: String(day.label.getUTCDate()) })]);
-    b.addEventListener('click', function () { radio(daysEl, b); chosenDay = day; chosenSlot = null; renderSlots(); });
-    daysEl.appendChild(b);
-  });
-  arrows(daysEl); arrows(slotsEl);
-
-  function renderSlots() {
-    slotsEl.textContent = '';
-    chosenDay.slots.forEach(function (s, idx) {
-      var b = el('button', { type: 'button', 'class': 'slot', role: 'radio', 'aria-checked': 'false', tabindex: idx === 0 ? '0' : '-1', text: fmtTime.format(s) });
-      b.addEventListener('click', function () { radio(slotsEl, b); chosenSlot = s; errEl.hidden = true; });
-      slotsEl.appendChild(b);
-    });
-  }
 
   function summary(data) {
     return [
-      'Hola Jorman, quiero agendar la consulta gratis de 15 minutos.',
-      'Horario: ' + fmtLong.format(chosenSlot) + (userTz ? ' (' + userTz + ')' : ''),
-      'En Venezuela: ' + fmtVet.format(chosenSlot),
+      'Hola Jorman, te escribo por el formulario de tu portafolio.',
       'Nombre: ' + data.nombre,
       'Negocio: ' + data.negocio,
       'Necesito: ' + data.tipo,
       'Contacto: ' + data.canal + ' · ' + data.contacto
     ].concat(data.nota ? ['Nota: ' + data.nota] : []).join('\n');
   }
+
   /* Reglas de cada campo. maxlength y pattern se ponen aquí para no depender del HTML generado. */
   var CONTACT = {
     Correo: { ph: 'tucorreo@ejemplo.com', ac: 'email', im: 'email', test: function (v) { return v.length <= 120 && /^[^\s@<>()"',;:]+@[^\s@<>()"',;:]+\.[^\s@<>()"',;:]{2,}$/.test(v) ? '' : 'Revisa el correo: falta la @ o el dominio.'; } },
     Instagram: { ph: 'tuusuario', ac: 'username', im: 'text', test: function (v) { return /^[A-Za-z0-9._]{1,30}$/.test(v) ? '' : 'Un usuario de Instagram solo lleva letras, números, puntos y guiones bajos.'; } },
     WhatsApp: { ph: '+34600000000', ac: 'tel', im: 'tel', test: function (v) { return phoneMsg(v, 8, 'Escribe el número con el código de país, por ejemplo +34600000000.'); } },
-    Freelancer: { ph: 'tu usuario de Freelancer', ac: 'username', im: 'text', test: function (v) { return /^[A-Za-z0-9_.-]{3,32}$/.test(v) ? '' : 'El usuario de Freelancer solo lleva letras, números, puntos, guiones y guiones bajos.'; } }
+    Freelancer: { ph: 'tu usuario de Freelancer', ac: 'username', im: 'text', test: function (v) { return /^[A-Za-z0-9_.-]{3,32}$/.test(v) ? '' : 'El usuario de Freelancer solo lleva letras, números, puntos, guiones y guiones bajos.'; } },
+    Workana: { ph: 'tu usuario de Workana', ac: 'username', im: 'text', test: function (v) { return /^[A-Za-z0-9_.-]{3,32}$/.test(v) ? '' : 'El usuario de Workana solo lleva letras, números, puntos, guiones y guiones bajos.'; } }
   };
   var RULES = {
     nombre: function (v) { return nameMsg(clean(v), 2, 80, 'Escribe tu nombre.'); },
@@ -232,7 +166,7 @@
     return !msg;
   }
   ['nombre', 'negocio', 'contacto', 'nota'].forEach(function (n) { live(f[n], RULES[n], function (m) { show(n, m); }); });
-  var KIND = { nombre: 'name', negocio: 'text', nota: 'text', contacto: function () { return { WhatsApp: 'phone', Instagram: 'user', Freelancer: 'user' }[f.canal.value] || 'text'; } };
+  var KIND = { nombre: 'name', negocio: 'text', nota: 'text', contacto: function () { return { WhatsApp: 'phone', Instagram: 'user', Freelancer: 'user', Workana: 'user' }[f.canal.value] || 'text'; } };
   Object.keys(KIND).forEach(function (n) { filter(f[n], KIND[n], function (m) { show(n, m); }); });
   f.canal.addEventListener('change', function () {
     var c = CONTACT[f.canal.value];
@@ -253,7 +187,6 @@
       var ok = show(n, RULES[n](f[n].value));
       if (!ok) { bad.push(f[n].closest('label').firstChild.textContent.trim().toLowerCase()); first = first || f[n]; }
     });
-    if (!chosenSlot) { bad.unshift('día y hora'); first = first || daysEl.querySelector('[role=radio]'); }
     if (bad.length) {
       errEl.textContent = 'Revisa: ' + bad.join(', ') + '.'; errEl.hidden = false;
       if (first) first.focus(); return;
@@ -265,8 +198,7 @@
     if (CFG.ENDPOINT) {
       fetch(CFG.ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify({ mensaje: text }) }).catch(function () {});
     }
-    form.hidden = true; booked.hidden = false; booked.focus();
+    form.hidden = true; sent.hidden = false; sent.focus();
   });
   document.getElementById('copy').addEventListener('click', function () { copy(summaryEl.textContent); this.textContent = 'Copiado'; });
-  }
 })();

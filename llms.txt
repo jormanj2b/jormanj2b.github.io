@@ -6,8 +6,9 @@ Los sitios están hechos en HTML, CSS y JavaScript sin frameworks, publicados en
 
 ## Portafolio y contacto
 
-- [Página principal, servicios, planes y agenda de la consulta gratis de 15 minutos](https://jormanj2b.github.io/)
+- [Página principal, servicios, planes y formulario de contacto](https://jormanj2b.github.io/#contacto)
 - [Perfil en Freelancer](https://www.freelancer.es/u/Jormanbm)
+- [Perfil en Workana](https://www.workana.com/freelancer/8dcdf0132579d745c3b581b075f9bce9)
 - [Instagram](https://www.instagram.com/jorman_j2b/)
 
 ## Proyectos de muestra
