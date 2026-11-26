@@ -1,6 +1,6 @@
 # Portafolio · Jorman Bravo · Desarrollo web
 
-Sitio de portafolio en https://jormanbravo.com/: proyectos, servicios, precios orientativos, proceso, garantía, mantenimiento y contacto.
+Sitio de portafolio en https://jormanbravo.com/: proyectos, servicios, precios orientativos, proceso, garantía, mantenimiento y contacto. Versión en inglés: https://jormanbravo.com/en/.
 
 HTML, CSS y un archivo de JavaScript propio (`main.js`), sin librerías externas. Las fuentes están alojadas en el propio repo (Bricolage Grotesque e IBM Plex Mono, licencia OFL).
 
@@ -14,7 +14,7 @@ HTML, CSS y un archivo de JavaScript propio (`main.js`), sin librerías externas
 | 05 | Ribera & Ochoa Asesores | Sitio corporativo | https://jormanbravo.com/demo-asesoria/ | jormanj2b/demo-asesoria |
 | 06 | Forja Entrenamiento | Landing de conversión | https://jormanbravo.com/demo-gimnasio/ | jormanj2b/demo-gimnasio |
 
-Los proyectos 02–06 son negocios ficticios. Las fotos de esas demos se generaron con IA.
+Los proyectos 02–06 son negocios ficticios. Las fotos de esas demos se generaron con IA. Cada demo tiene una versión en inglés bajo `/en/` (por ejemplo https://jormanbravo.com/demo-cafe/en/). El catálogo de Laborathorno, en inglés, se presenta como la panadería ficticia Hearth & Crumb.
 
 ## Cambios frecuentes
 - **Nombre de marca** (p. ej. «JormanWebs»): busca `Jorman Bravo · Desarrollo web` y `brand-name` en `index.html`. Aparece en el `<title>`, las metas OG, el JSON-LD, la cabecera y el pie. Cambia también las iniciales `JB` de `brand-mark` y `favicon.svg`.

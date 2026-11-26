@@ -1,21 +1,25 @@
-# Jorman Bravo · Desarrollador web freelance
+# Jorman Bravo · Freelance web developer
 
 > Diseño, programo y publico sitios web completos para negocios locales (panaderías, cafés, restaurantes, barberías y más): catálogos con pedidos, reservas, tiendas y landings. Trabajo en remoto desde Venezuela, en español e inglés, para clientes de España, EE. UU. y Latinoamérica.
 
-Los sitios están hechos en HTML, CSS y JavaScript sin frameworks, publicados en GitHub Pages, con el código a nombre del cliente.
+> I design, build, and publish complete websites for local businesses (bakeries, cafés, restaurants, barbershops, and more): catalogs with ordering, booking pages, shops, and landing pages. I work remotely from Venezuela, in Spanish and English, for clients in Spain, the United States, and Latin America.
 
-## Portafolio y contacto
+Los sitios están hechos en HTML, CSS y JavaScript sin frameworks, publicados en GitHub Pages, con el código a nombre del cliente. / Sites are built in HTML, CSS, and JavaScript with no frameworks, published on GitHub Pages, with the code in the client’s name.
 
-- [Página principal, servicios, planes y formulario de contacto](https://jormanbravo.com/#contacto)
+## Portafolio y contacto / Portfolio and contact
+
+- [Página principal en español](https://jormanbravo.com/)
+- [English portfolio, services, plans, and contact form](https://jormanbravo.com/en/#contacto)
+- [Email](mailto:jormanj2b@gmail.com)
 - [Perfil en LinkedIn](https://www.linkedin.com/in/jorman-jose-bravo-mota-69783335a/)
 - [Perfil en Freelancer](https://www.freelancer.es/u/Jormanbm)
 - [Perfil en Workana](https://www.workana.com/freelancer/8dcdf0132579d745c3b581b075f9bce9)
 
-## Proyectos de muestra
+## Proyectos de muestra / Sample projects
 
-- [Laborathorno: catálogo digital con pedidos por WhatsApp](https://jormanbravo.com/laborathorno-demo/)
-- [Barbería Corte Norte: página de reservas (demo)](https://jormanbravo.com/demo-barberia/)
-- [Café Almendro: carta digital con QR (demo)](https://jormanbravo.com/demo-cafe/)
-- [Barro Lento: tienda online (demo)](https://jormanbravo.com/demo-tienda/)
-- [Ribera & Ochoa Asesores: sitio corporativo (demo)](https://jormanbravo.com/demo-asesoria/)
-- [Forja Entrenamiento: landing de conversión (demo)](https://jormanbravo.com/demo-gimnasio/)
+- [Laborathorno (ES)](https://jormanbravo.com/laborathorno-demo/) · [Hearth & Crumb (EN)](https://jormanbravo.com/laborathorno-demo/en/)
+- [Barbería Corte Norte (ES)](https://jormanbravo.com/demo-barberia/) · [Northside Barber Co. (EN)](https://jormanbravo.com/demo-barberia/en/)
+- [Café Almendro (ES)](https://jormanbravo.com/demo-cafe/) · [Almond Tree Café (EN)](https://jormanbravo.com/demo-cafe/en/)
+- [Barro Lento (ES)](https://jormanbravo.com/demo-tienda/) · [Slow Clay (EN)](https://jormanbravo.com/demo-tienda/en/)
+- [Ribera & Ochoa Asesores (ES)](https://jormanbravo.com/demo-asesoria/) · [Rivera & Ochoa Tax & Accounting (EN)](https://jormanbravo.com/demo-asesoria/en/)
+- [Forja Entrenamiento (ES)](https://jormanbravo.com/demo-gimnasio/) · [Forge Training (EN)](https://jormanbravo.com/demo-gimnasio/en/)

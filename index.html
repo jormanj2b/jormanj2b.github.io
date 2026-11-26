@@ -6,6 +6,9 @@
 <title>Jorman Bravo · Desarrollo web | Sitios completos para negocios locales</title>
 <meta name="description" content="Diseño, programo y publico sitios web completos para negocios locales: catálogos con pedidos, reservas, tiendas y landings. Dominio, código a tu nombre, SEO, garantía y mantenimiento.">
 <link rel="canonical" href="https://jormanbravo.com/">
+<link rel="alternate" hreflang="es" href="https://jormanbravo.com/">
+<link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/">
+<link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://jormanj2b.goatcounter.com; style-src 'self'; script-src 'self' https://gc.zgo.at; font-src 'self'; connect-src 'self' https://jormanj2b.goatcounter.com; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#FBF6EC">
@@ -15,13 +18,14 @@
 <meta property="og:url" content="https://jormanbravo.com/">
 <meta property="og:image" content="https://jormanbravo.com/img/og.jpg">
 <meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/bricolage-grotesque-normal-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" href="img/jorman-480.webp" imagesrcset="img/jorman-480.webp 480w, img/jorman-800.webp 800w" imagesizes="(min-width: 960px) 360px, 240px">
 <link rel="stylesheet" href="fonts.css">
-<link rel="stylesheet" href="styles.css?v8">
-<script src="main.js?v9" defer></script>
+<link rel="stylesheet" href="styles.css?v10">
+<script src="main.js?v10" defer></script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"Person","@id":"https://jormanbravo.com/#jorman","name":"Jorman Bravo","jobTitle":"Desarrollador web freelance","address":{"@type":"PostalAddress","addressCountry":"VE"},"image":"https://jormanbravo.com/img/jorman-192.webp","url":"https://jormanbravo.com/","sameAs":["https://www.freelancer.es/u/Jormanbm","https://www.workana.com/freelancer/8dcdf0132579d745c3b581b075f9bce9","https://github.com/jormanj2b","https://www.linkedin.com/in/jorman-jose-bravo-mota-69783335a/"],"knowsLanguage":["es","en"]},
@@ -33,10 +37,17 @@
 <a class="skip" href="#proyectos">Saltar a los proyectos</a>
 <header class="top">
   <a class="brand" href="./"><span class="brand-mark" aria-hidden="true">JB</span><span class="brand-name">Jorman Bravo <span class="brand-sep">·</span> <span class="brand-role">Desarrollo web</span></span></a>
+  <div class="top-end">
   <nav aria-label="Principal">
     <a href="#proyectos">Proyectos</a><a href="#servicios">Servicios</a><a href="#proceso">Cómo trabajo</a>
     <a class="btn btn-small" href="#contacto">Escríbeme</a>
   </nav>
+    <nav class="lang" aria-label="Idioma">
+      <a href="/" hreflang="es" lang="es" aria-current="page" aria-label="Español">ES</a>
+      <span class="lang-sep" aria-hidden="true">/</span>
+      <a href="/en/" hreflang="en" lang="en" aria-label="English">EN</a>
+    </nav>
+  </div>
 </header>
 
 <main>
@@ -281,6 +292,7 @@
     <p>Cuéntame tu negocio en el formulario. Te respondo por mensaje, normalmente en 24 horas. Si prefieres que el pago quede protegido por una plataforma, contrátame por Freelancer o Workana.</p>
     <figure class="me"><img src="img/jorman-96.webp" srcset="img/jorman-96.webp 1x, img/jorman-192.webp 2x" width="96" height="96" alt="Jorman Bravo" loading="lazy"><figcaption><b>Jorman Bravo</b><span>Desarrollador web · desde Venezuela, en remoto</span></figcaption></figure>
     <div class="contact-links">
+      <a class="btn btn-line" href="mailto:jormanj2b@gmail.com">jormanj2b@gmail.com</a>
       <a class="btn btn-line" href="https://www.linkedin.com/in/jorman-jose-bravo-mota-69783335a/" target="_blank" rel="noopener">LinkedIn</a>
       <a class="btn btn-line" href="https://www.freelancer.es/u/Jormanbm" target="_blank" rel="noopener">Freelancer</a>
       <a class="btn btn-line" href="https://www.workana.com/freelancer/8dcdf0132579d745c3b581b075f9bce9" target="_blank" rel="noopener">Workana</a>
@@ -296,7 +308,7 @@
           <option value="">Elige una opción</option><option>Landing page</option><option>Página informativa</option><option>Catálogo digital</option><option>Página de reservas</option><option>Sitio corporativo</option><option>Tienda online</option><option>Sistema a medida</option><option>Aún no lo sé</option>
         </select></label>
         <label>Cómo te contacto<select name="canal" required>
-          <option value="">Elige un canal</option><option>Correo</option><option>WhatsApp</option><option>Freelancer</option><option>Workana</option>
+          <option value="">Elige un canal</option><option value="email">Correo</option><option value="whatsapp">WhatsApp</option><option value="freelancer">Freelancer</option><option value="workana">Workana</option>
         </select></label>
         <label class="wide">Tu correo, usuario o número<input name="contacto" required maxlength="120" autocomplete="email"></label>
         <label class="wide">Algo más (opcional)<textarea name="nota" rows="3" maxlength="600"></textarea></label>
@@ -329,7 +341,7 @@
 
 <footer class="foot">
   <p><span class="brand-name">Jorman Bravo · Desarrollo web</span> · Venezuela, trabajo remoto</p>
-  <p><a href="https://github.com/jormanj2b" target="_blank" rel="noopener">GitHub</a> · <a href="https://www.linkedin.com/in/jorman-jose-bravo-mota-69783335a/" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://www.freelancer.es/u/Jormanbm" target="_blank" rel="noopener">Freelancer</a> · <a href="https://www.workana.com/freelancer/8dcdf0132579d745c3b581b075f9bce9" target="_blank" rel="noopener">Workana</a></p>
+  <p><a href="mailto:jormanj2b@gmail.com">jormanj2b@gmail.com</a> · <a href="https://github.com/jormanj2b" target="_blank" rel="noopener">GitHub</a> · <a href="https://www.linkedin.com/in/jorman-jose-bravo-mota-69783335a/" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://www.freelancer.es/u/Jormanbm" target="_blank" rel="noopener">Freelancer</a> · <a href="https://www.workana.com/freelancer/8dcdf0132579d745c3b581b075f9bce9" target="_blank" rel="noopener">Workana</a></p>
   <p class="small">Uso GoatCounter, una analítica sin cookies ni identificadores de seguimiento, solo para ver las visitas del sitio. Lo que escribes en el formulario no sale de tu navegador hasta que lo envías.</p>
   <p class="ck-foot small"><button type="button" class="ck-link" data-cookie-prefs>Preferencias de cookies</button> · <a href="cookies.html">Política de cookies</a></p>
 </footer>
