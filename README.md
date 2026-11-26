@@ -1,18 +1,18 @@
 # Portafolio · Jorman Bravo · Desarrollo web
 
-Sitio de portafolio en https://jormanj2b.github.io/: proyectos, servicios, precios orientativos, proceso, garantía, mantenimiento y contacto.
+Sitio de portafolio en https://jormanbravo.com/: proyectos, servicios, precios orientativos, proceso, garantía, mantenimiento y contacto.
 
 HTML, CSS y un archivo de JavaScript propio (`main.js`), sin librerías externas. Las fuentes están alojadas en el propio repo (Bricolage Grotesque e IBM Plex Mono, licencia OFL).
 
 ## Proyectos
 | # | Proyecto | Tipo | Demo | Repo |
 |---|----------|------|------|------|
-| 01 | Laborathorno (cliente real) | Catálogo + pedidos por WhatsApp | https://jormanj2b.github.io/laborathorno-demo/ | — |
-| 02 | Barbería Corte Norte | Reservas | https://jormanj2b.github.io/demo-barberia/ | jormanj2b/demo-barberia |
-| 03 | Café Almendro | Carta QR | https://jormanj2b.github.io/demo-cafe/ | jormanj2b/demo-cafe |
-| 04 | Barro Lento | Tienda online | https://jormanj2b.github.io/demo-tienda/ | jormanj2b/demo-tienda |
-| 05 | Ribera & Ochoa Asesores | Sitio corporativo | https://jormanj2b.github.io/demo-asesoria/ | jormanj2b/demo-asesoria |
-| 06 | Forja Entrenamiento | Landing de conversión | https://jormanj2b.github.io/demo-gimnasio/ | jormanj2b/demo-gimnasio |
+| 01 | Laborathorno (cliente real) | Catálogo + pedidos por WhatsApp | https://jormanbravo.com/laborathorno-demo/ | — |
+| 02 | Barbería Corte Norte | Reservas | https://jormanbravo.com/demo-barberia/ | jormanj2b/demo-barberia |
+| 03 | Café Almendro | Carta QR | https://jormanbravo.com/demo-cafe/ | jormanj2b/demo-cafe |
+| 04 | Barro Lento | Tienda online | https://jormanbravo.com/demo-tienda/ | jormanj2b/demo-tienda |
+| 05 | Ribera & Ochoa Asesores | Sitio corporativo | https://jormanbravo.com/demo-asesoria/ | jormanj2b/demo-asesoria |
+| 06 | Forja Entrenamiento | Landing de conversión | https://jormanbravo.com/demo-gimnasio/ | jormanj2b/demo-gimnasio |
 
 Los proyectos 02–06 son negocios ficticios. Las fotos de esas demos se generaron con IA.
 

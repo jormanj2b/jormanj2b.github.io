@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://jormanj2b.github.io/sitemap.xml
+Sitemap: https://jormanbravo.com/sitemap.xml
