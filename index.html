@@ -21,10 +21,10 @@
 <link rel="preload" as="image" href="img/jorman-480.webp" imagesrcset="img/jorman-480.webp 480w, img/jorman-800.webp 800w" imagesizes="(min-width: 960px) 360px, 240px">
 <link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="styles.css?v8">
-<script src="main.js?v8" defer></script>
+<script src="main.js?v9" defer></script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
-{"@type":"Person","@id":"https://jormanj2b.github.io/#jorman","name":"Jorman Bravo","jobTitle":"Desarrollador web freelance","address":{"@type":"PostalAddress","addressCountry":"VE"},"image":"https://jormanj2b.github.io/img/jorman-192.webp","url":"https://jormanj2b.github.io/","sameAs":["https://www.freelancer.es/u/Jormanbm","https://www.workana.com/freelancer/8dcdf0132579d745c3b581b075f9bce9","https://www.instagram.com/jorman_j2b/","https://github.com/jormanj2b"],"knowsLanguage":["es","en"]},
+{"@type":"Person","@id":"https://jormanj2b.github.io/#jorman","name":"Jorman Bravo","jobTitle":"Desarrollador web freelance","address":{"@type":"PostalAddress","addressCountry":"VE"},"image":"https://jormanj2b.github.io/img/jorman-192.webp","url":"https://jormanj2b.github.io/","sameAs":["https://www.freelancer.es/u/Jormanbm","https://www.workana.com/freelancer/8dcdf0132579d745c3b581b075f9bce9","https://github.com/jormanj2b"],"knowsLanguage":["es","en"]},
 {"@type":"ProfessionalService","name":"Jorman Bravo · Desarrollo web","url":"https://jormanj2b.github.io/","founder":{"@id":"https://jormanj2b.github.io/#jorman"},"areaServed":["ES","US","MX","CL","CO","VE"],"description":"Sitios web completos para negocios locales: catálogos con pedidos, páginas de reservas, tiendas online, sitios corporativos y landings.","priceRange":"desde 150 USD"}
 ]}
 </script>
@@ -295,7 +295,7 @@
           <option value="">Elige una opción</option><option>Landing page</option><option>Página informativa</option><option>Catálogo digital</option><option>Página de reservas</option><option>Sitio corporativo</option><option>Tienda online</option><option>Sistema a medida</option><option>Aún no lo sé</option>
         </select></label>
         <label>Cómo te contacto<select name="canal" required>
-          <option value="">Elige un canal</option><option>Correo</option><option>Instagram</option><option>WhatsApp</option><option>Freelancer</option><option>Workana</option>
+          <option value="">Elige un canal</option><option>Correo</option><option>WhatsApp</option><option>Freelancer</option><option>Workana</option>
         </select></label>
         <label class="wide">Tu correo, usuario o número<input name="contacto" required maxlength="120" autocomplete="email"></label>
         <label class="wide">Algo más (opcional)<textarea name="nota" rows="3" maxlength="600"></textarea></label>
@@ -306,12 +306,11 @@
   </form>
   <div class="booked" id="enviado" tabindex="-1" hidden>
     <h3>Ya casi: envíame el mensaje</h3>
-    <p>Copié este resumen. Pégalo en Freelancer, Workana o Instagram y te respondo en menos de 24 horas.</p>
+    <p>Copié este resumen. Pégalo en Freelancer o Workana y te respondo en menos de 24 horas.</p>
     <pre id="summary"></pre>
     <div class="booked-actions">
       <a class="btn" href="https://www.freelancer.es/u/Jormanbm" target="_blank" rel="noopener">Enviar por Freelancer</a>
       <a class="btn btn-line" href="https://www.workana.com/freelancer/8dcdf0132579d745c3b581b075f9bce9" target="_blank" rel="noopener">Enviar por Workana</a>
-      <a class="btn btn-line" href="https://ig.me/m/jorman_j2b" target="_blank" rel="noopener">Enviar por Instagram</a>
       <button class="btn btn-line" type="button" id="copy">Copiar de nuevo</button>
     </div>
   </div>
@@ -329,7 +328,7 @@
 
 <footer class="foot">
   <p><span class="brand-name">Jorman Bravo · Desarrollo web</span> · Venezuela, trabajo remoto</p>
-  <p><a href="https://github.com/jormanj2b" target="_blank" rel="noopener">GitHub</a> · <a href="https://www.freelancer.es/u/Jormanbm" target="_blank" rel="noopener">Freelancer</a> · <a href="https://www.workana.com/freelancer/8dcdf0132579d745c3b581b075f9bce9" target="_blank" rel="noopener">Workana</a> · <a href="https://www.instagram.com/jorman_j2b/" target="_blank" rel="noopener">Instagram</a></p>
+  <p><a href="https://github.com/jormanj2b" target="_blank" rel="noopener">GitHub</a> · <a href="https://www.freelancer.es/u/Jormanbm" target="_blank" rel="noopener">Freelancer</a> · <a href="https://www.workana.com/freelancer/8dcdf0132579d745c3b581b075f9bce9" target="_blank" rel="noopener">Workana</a></p>
   <p class="small">Uso GoatCounter, una analítica sin cookies ni identificadores de seguimiento, solo para ver las visitas del sitio. Lo que escribes en el formulario no sale de tu navegador hasta que lo envías.</p>
   <p class="ck-foot small"><button type="button" class="ck-link" data-cookie-prefs>Preferencias de cookies</button> · <a href="cookies.html">Política de cookies</a></p>
 </footer>

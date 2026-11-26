@@ -134,7 +134,6 @@
   /* Reglas de cada campo. maxlength y pattern se ponen aquí para no depender del HTML generado. */
   var CONTACT = {
     Correo: { ph: 'tucorreo@ejemplo.com', ac: 'email', im: 'email', test: function (v) { return v.length <= 120 && /^[^\s@<>()"',;:]+@[^\s@<>()"',;:]+\.[^\s@<>()"',;:]{2,}$/.test(v) ? '' : 'Revisa el correo: falta la @ o el dominio.'; } },
-    Instagram: { ph: 'tuusuario', ac: 'username', im: 'text', test: function (v) { return /^[A-Za-z0-9._]{1,30}$/.test(v) ? '' : 'Un usuario de Instagram solo lleva letras, números, puntos y guiones bajos.'; } },
     WhatsApp: { ph: '+34600000000', ac: 'tel', im: 'tel', test: function (v) { return phoneMsg(v, 8, 'Escribe el número con el código de país, por ejemplo +34600000000.'); } },
     Freelancer: { ph: 'tu usuario de Freelancer', ac: 'username', im: 'text', test: function (v) { return /^[A-Za-z0-9_.-]{3,32}$/.test(v) ? '' : 'El usuario de Freelancer solo lleva letras, números, puntos, guiones y guiones bajos.'; } },
     Workana: { ph: 'tu usuario de Workana', ac: 'username', im: 'text', test: function (v) { return /^[A-Za-z0-9_.-]{3,32}$/.test(v) ? '' : 'El usuario de Workana solo lleva letras, números, puntos, guiones y guiones bajos.'; } }
@@ -166,7 +165,7 @@
     return !msg;
   }
   ['nombre', 'negocio', 'contacto', 'nota'].forEach(function (n) { live(f[n], RULES[n], function (m) { show(n, m); }); });
-  var KIND = { nombre: 'name', negocio: 'text', nota: 'text', contacto: function () { return { WhatsApp: 'phone', Instagram: 'user', Freelancer: 'user', Workana: 'user' }[f.canal.value] || 'text'; } };
+  var KIND = { nombre: 'name', negocio: 'text', nota: 'text', contacto: function () { return { WhatsApp: 'phone', Freelancer: 'user', Workana: 'user' }[f.canal.value] || 'text'; } };
   Object.keys(KIND).forEach(function (n) { filter(f[n], KIND[n], function (m) { show(n, m); }); });
   f.canal.addEventListener('change', function () {
     var c = CONTACT[f.canal.value];
