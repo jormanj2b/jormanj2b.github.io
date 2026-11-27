@@ -272,3 +272,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
 
 /* Keep small project labels at full contrast on colored cards. */
 .p-cafe .who,.p-tienda .who,.p-tienda .label,.p-tienda .tags li{opacity:1}
+
+/* Embedded contact verification */
+.captcha-section{min-width:0;display:grid;gap:.5rem;justify-items:start}.captcha-widget{width:100%;min-width:0}.captcha-status,.captcha-section .small{font-size:.88rem;color:var(--muted)}.captcha-section .btn{min-height:44px}.booking .btn:disabled{opacity:.65;cursor:wait;transform:none}
