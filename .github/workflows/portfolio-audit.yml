@@ -33,6 +33,7 @@ jobs:
         run: |
           python - <<'PY'
           import json
+          from urllib.parse import parse_qs
           from pathlib import Path
           from playwright.sync_api import sync_playwright
           out=Path('audit')
@@ -54,8 +55,8 @@ jobs:
                       page.route('https://jormanj2b.goatcounter.com/**',lambda route: route.fulfill(status=200,body=''))
                       submissions=[]
                       def intercept(route):
-                          submissions.append(route.request.post_data_json)
-                          route.fulfill(status=200,content_type='application/json',body='{"ok":true}',headers={'access-control-allow-origin':'*'})
+                          submissions.append({k:v[0] for k,v in parse_qs(route.request.post_data or '',keep_blank_values=True).items()})
+                          route.fulfill(status=200,content_type='text/html',body='<html><body><h1 id="mock-captcha">Mock verification, no mail sent</h1></body></html>')
                       page.route('https://formspree.io/f/mkjredvr',intercept)
                       page.goto(base+slug,wait_until='networkidle')
                       reject=page.get_by_role('button',name='Rechazar todas' if lang=='es' else 'Reject all',exact=True)
@@ -89,7 +90,7 @@ jobs:
                       page.locator('[name=contacto]').fill('test@example.com')
                       page.locator('[name=nota]').fill('Automated test; intercepted locally.')
                       page.locator('#contacto-form button[type=submit]').click()
-                      page.locator('#enviado').wait_for(state='visible',timeout=10000)
+                      page.locator('#mock-captcha').wait_for(state='visible',timeout=10000)
                       form_ok=len(submissions)==1 and submissions[0].get('email')=='test@example.com' and submissions[0].get('language')==lang
                       page.goto(base+slug+'#contacto')
                       other='EN' if lang=='es' else 'ES'
