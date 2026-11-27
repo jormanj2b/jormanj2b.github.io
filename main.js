@@ -5,7 +5,7 @@
 
   /* ---------- Configuración del formulario ---------- */
   var CFG = {
-    ENDPOINT: ''             // opcional: URL tipo Formspree. Si la usas, añádela a connect-src en la CSP.
+    ENDPOINT: 'https://formspree.io/f/mkjredvr'             // opcional: URL tipo Formspree. Si la usas, añádela a connect-src en la CSP.
   };
 
   var LANG = ((document.documentElement.lang || 'es') + '').toLowerCase().slice(0, 2);
@@ -213,7 +213,7 @@
   if (!form) return;
 
   var errEl = document.getElementById('form-error'), sent = document.getElementById('enviado');
-  var summaryEl = document.getElementById('summary');
+  var submit = form.querySelector('button[type="submit"]');
 
   function el(tag, attrs, kids) {
     var n = document.createElement(tag);
@@ -276,7 +276,7 @@
   ['nombre', 'negocio', 'contacto', 'nota'].forEach(function (n) { live(f[n], RULES[n], function (msg) { show(n, msg); }); });
   var KIND = { nombre: 'name', negocio: 'text', nota: 'text', contacto: function () { return { whatsapp: 'phone', WhatsApp: 'phone', freelancer: 'user', Freelancer: 'user', workana: 'user', Workana: 'user' }[f.canal.value] || 'text'; } };
   Object.keys(KIND).forEach(function (n) { filter(f[n], KIND[n], function (msg) { show(n, msg); }); });
-  f.canal.addEventListener('change', function () {
+  if (f.canal.tagName === 'SELECT') f.canal.addEventListener('change', function () {
     var c = CONTACT[f.canal.value];
     if (c) { f.contacto.placeholder = c.ph; f.contacto.setAttribute('autocomplete', c.ac); f.contacto.setAttribute('inputmode', c.im); }
     show('canal', RULES.canal(f.canal.value));
@@ -286,12 +286,13 @@
 
   function copy(text) { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).catch(function () {}); }
 
-  form.addEventListener('submit', function (e) {
+  form.addEventListener('submit', async function (e) {
     e.preventDefault();
     var bad = [], first = null;
     ['nombre', 'negocio', 'contacto'].forEach(function (n) { f[n].value = clean(f[n].value); });
     f.nota.value = cleanLong(f.nota.value);
     ['nombre', 'negocio', 'tipo', 'canal', 'contacto', 'nota'].forEach(function (n) {
+      if (n === 'canal' && f[n].type === 'hidden') return;
       var ok = show(n, RULES[n](f[n].value));
       if (!ok) { bad.push(f[n].closest('label').firstChild.textContent.trim().toLowerCase()); first = first || f[n]; }
     });
@@ -303,15 +304,20 @@
     var data = {}; ['nombre', 'negocio', 'tipo', 'canal', 'contacto', 'nota'].forEach(function (n) { data[n] = f[n].value; });
     data.tipo = selectedText('tipo');
     data.canal = selectedText('canal');
-    var text = summary(data);
-    summaryEl.textContent = text; copy(text);
-    if (CFG.ENDPOINT) {
-      fetch(CFG.ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify({ mensaje: text }) }).catch(function () {});
-    }
-    form.hidden = true; sent.hidden = false; sent.focus();
-  });
-  document.getElementById('copy').addEventListener('click', function () {
-    copy(summaryEl.textContent);
-    this.textContent = m.copied;
+    if (submit.disabled) return;
+    submit.disabled = true;
+    var original = submit.textContent;
+    submit.textContent = LANG === 'en' ? 'Sending…' : 'Enviando…';
+    try {
+      var response = await fetch(CFG.ENDPOINT, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({name: data.nombre, business: data.negocio, email: data.contacto, service: data.tipo, message: data.nota, language: LANG, _gotcha: form.elements._gotcha.value})
+      });
+      if (!response.ok) throw new Error('Submission failed');
+      form.reset(); form.hidden = true; sent.hidden = false; sent.focus();
+    } catch (error) {
+      errEl.textContent = LANG === 'en' ? 'Your message could not be sent. Please try again or email me directly.' : 'No se pudo enviar tu mensaje. Inténtalo de nuevo o escríbeme directamente por correo.';
+      errEl.hidden = false;
+    } finally { submit.disabled = false; submit.textContent = original; }
   });
 })();
