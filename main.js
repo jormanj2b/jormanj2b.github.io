@@ -315,7 +315,7 @@
           size: captchaBox.clientWidth < 304 ? 'compact' : 'normal',
           callback: function () { captchaMessage(''); },
           'expired-callback': function () { captchaMessage(LANG === 'en' ? 'Verification expired. Please try again.' : 'La verificación caducó. Inténtalo de nuevo.'); },
-          'error-callback': function () { captchaMessage(LANG === 'en' ? 'Security check unavailable. Please retry or use one of the contact platforms above.' : 'Verificación no disponible. Reintenta o escríbeme por correo.'); }
+          'error-callback': function () { captchaMessage(LANG === 'en' ? 'Security check unavailable. Please retry or use one of the contact platforms above.' : 'Verificación no disponible. Reintenta o utiliza una de las plataformas de contacto de arriba.'); }
         });
         captchaLoading = false; captchaLoad.hidden = true; captchaMessage('');
       } catch (error) { failed(); }
