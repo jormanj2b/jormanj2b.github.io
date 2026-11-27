@@ -1,0 +1,91 @@
+name: Generate English project previews
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/portfolio-english-previews.yml'
+permissions:
+  contents: write
+concurrency:
+  group: portfolio-english-previews
+  cancel-in-progress: false
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install screenshot dependencies
+        run: |
+          python -m pip install playwright==1.51.0 Pillow==11.1.0
+          python -m playwright install --with-deps chromium
+      - name: Capture all six English demos
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from io import BytesIO
+          from playwright.sync_api import sync_playwright
+          from PIL import Image
+          sites = {
+            'laborathorno': 'laborathorno-demo/en/',
+            'barberia': 'demo-barberia/en/',
+            'cafe': 'demo-cafe/en/?mesa=7',
+            'tienda': 'demo-tienda/en/',
+            'asesoria': 'demo-asesoria/en/',
+            'gimnasio': 'demo-gimnasio/en/',
+          }
+          target = Path('img')
+          target.mkdir(exist_ok=True)
+          with sync_playwright() as p:
+              browser = p.chromium.launch()
+              for name, slug in sites.items():
+                  for mobile in (False, True):
+                      viewport = {'width': 375, 'height': 812} if mobile else {'width': 1440, 'height': 900}
+                      context = browser.new_context(viewport=viewport, locale='en-US', reduced_motion='reduce', is_mobile=mobile, has_touch=mobile, device_scale_factor=1)
+                      page = context.new_page()
+                      response = page.goto('https://jormanbravo.com/' + slug, wait_until='domcontentloaded', timeout=45000)
+                      assert response and response.ok, f'{slug}: navigation failed'
+                      page.wait_for_selector('h1', state='visible', timeout=15000)
+                      assert page.locator('html').get_attribute('lang').lower().startswith('en'), f'{slug}: not English'
+                      page.evaluate('document.fonts.ready')
+                      for label in ['Reject all', 'Reject all cookies']:
+                          button = page.get_by_role('button', name=label, exact=True).first
+                          if button.is_visible():
+                              button.click()
+                              break
+                      page.wait_for_timeout(1500)
+                      page.evaluate('Promise.all(Array.from(document.images).filter(i => i.getBoundingClientRect().top < innerHeight).map(i => i.decode().catch(() => {})))')
+                      raw = page.screenshot(animations='disabled', full_page=False, timeout=20000)
+                      im = Image.open(BytesIO(raw)).convert('RGB')
+                      assert im.getbbox(), f'{slug}: blank screenshot'
+                      if mobile:
+                          im.resize((300,649), Image.Resampling.LANCZOS).save(target / f'{name}-en-movil.webp', quality=88)
+                      else:
+                          for width in (480,960):
+                              im.resize((width,width*5//8), Image.Resampling.LANCZOS).save(target / f'{name}-en-{width}.webp', quality=88)
+                      context.close()
+              browser.close()
+          # Keep Spanish previews and layout untouched. Switch references only on English page.
+          html = Path('en/index.html')
+          s = html.read_text(encoding='utf-8')
+          for name in sites:
+              for suffix in ('480','960','movil'):
+                  old = f'{name}-v7-{suffix}.webp'
+                  new = f'{name}-en-{suffix}.webp'
+                  assert (target / new).stat().st_size > 1000
+                  assert old in s or new in s, f'Missing preview reference: {old}'
+                  s = s.replace(old,new)
+          html.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit generated previews
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add img/*-en-480.webp img/*-en-960.webp img/*-en-movil.webp en/index.html
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Use real English desktop and mobile previews"
+          git push origin HEAD:main
