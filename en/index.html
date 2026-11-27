@@ -9,7 +9,7 @@
 <link rel="alternate" hreflang="es" href="https://jormanbravo.com/">
 <link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/">
 <link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://jormanj2b.goatcounter.com; style-src 'self'; script-src 'self' https://gc.zgo.at; font-src 'self'; connect-src 'self' https://jormanj2b.goatcounter.com https://formspree.io; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://jormanj2b.goatcounter.com; style-src 'self'; script-src 'self' https://gc.zgo.at; font-src 'self'; connect-src 'self' https://jormanj2b.goatcounter.com https://formspree.io; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#FBF6EC">
 <meta property="og:type" content="website">
@@ -25,7 +25,7 @@
 <link rel="preload" as="image" href="../img/jorman-480.webp" imagesrcset="../img/jorman-480.webp 480w, ../img/jorman-800.webp 800w" imagesizes="(min-width: 960px) 360px, 240px">
 <link rel="stylesheet" href="../fonts.css">
 <link rel="stylesheet" href="../styles.css?v11">
-<script src="../main.js?v12" defer></script>
+<script src="../main.js?v13" defer></script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"Person","@id":"https://jormanbravo.com/#jorman","name":"Jorman Bravo","jobTitle":"Freelance web developer","address":{"@type":"PostalAddress","addressCountry":"VE"},"image":"https://jormanbravo.com/img/jorman-192.webp","url":"https://jormanbravo.com/","sameAs":["https://www.freelancer.es/u/Jormanbm","https://www.workana.com/freelancer/8dcdf0132579d745c3b581b075f9bce9","https://github.com/jormanj2b","https://www.linkedin.com/in/jorman-jose-bravo-mota-69783335a/"],"knowsLanguage":["es","en"]},
@@ -70,7 +70,7 @@
     <div class="tile tile-photo"><img src="../img/jorman-480.webp" srcset="../img/jorman-480.webp 480w, ../img/jorman-800.webp 800w" sizes="(min-width: 960px) 360px, 240px" width="800" height="800" alt="" fetchpriority="high"></div>
     <div class="tile tile-browser"><div class="bar"><i></i><i></i><i></i></div><img src="../img/barberia-en-480.webp" width="960" height="600" alt=""></div>
     <div class="tile tile-phone"><img src="../img/cafe-en-movil.webp" width="300" height="649" alt=""></div>
-    <p class="tile tile-badge mono">Mobile Lighthouse<br><b>98–100</b></p>
+    <p class="tile tile-badge mono">Mobile-first<br><b>ES / EN</b></p>
   </div>
 </section>
 
@@ -298,7 +298,7 @@
       <a class="btn btn-line" href="https://www.workana.com/freelancer/8dcdf0132579d745c3b581b075f9bce9" target="_blank" rel="noopener">Workana</a>
     </div>
   </div>
-  <form id="contacto-form" class="booking" novalidate>
+  <form id="contacto-form" class="booking" method="post" action="https://formspree.io/f/mkjredvr" novalidate>
     <fieldset>
       <legend>Your details</legend>
       <div class="fields">
@@ -334,9 +334,9 @@
 <footer class="foot">
   <p><span class="brand-name">Jorman Bravo · Web development</span> · Venezuela, remote work</p>
   <p><a href="mailto:jormanj2b@gmail.com">jormanj2b@gmail.com</a> · <a href="https://github.com/jormanj2b" target="_blank" rel="noopener">GitHub</a> · <a href="https://www.linkedin.com/in/jorman-jose-bravo-mota-69783335a/" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://www.freelancer.es/u/Jormanbm" target="_blank" rel="noopener">Freelancer</a> · <a href="https://www.workana.com/freelancer/8dcdf0132579d745c3b581b075f9bce9" target="_blank" rel="noopener">Workana</a></p>
-  <p class="small">I use GoatCounter, a cookie-free analytics tool with no tracking identifiers, only to see visits to the site. When you submit the contact form, Formspree processes your details to deliver your message by email.</p>
+  <p class="small">I use GoatCounter to count visits without analytics cookies, only when you allow analytics. When you submit the contact form, Formspree processes your details to deliver your message by email.</p>
   <p class="ck-foot small"><button type="button" class="ck-link" data-cookie-prefs>Cookie preferences</button> · <a href="cookies.html">Cookie policy</a></p>
 </footer>
-<script data-goatcounter="https://jormanj2b.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script type="text/plain" data-cookie-category="analitica" data-goatcounter="https://jormanj2b.goatcounter.com/count" data-src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
