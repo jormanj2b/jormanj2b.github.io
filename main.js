@@ -290,9 +290,23 @@
   });
   f.tipo.addEventListener('change', function () { show('tipo', RULES.tipo(f.tipo.value)); });
 
-  function copy(text) { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).catch(function () {}); }
-
-  form.addEventListener('submit', async function (e) {
+  // Native POST allows Formspree to show its hosted CAPTCHA and confirmation.
+  form.addEventListener('formdata', function (e) {
+    var data = e.formData;
+    var names = { nombre: 'name', negocio: 'business', contacto: 'email', tipo: 'service', nota: 'message' };
+    Object.keys(names).forEach(function (key) {
+      if (data.has(key)) { data.set(names[key], data.get(key)); data.delete(key); }
+    });
+    data.delete('canal');
+    data.set('language', LANG);
+  });
+  form.noValidate = true;
+  var original = submit.textContent;
+  window.addEventListener('pageshow', function () {
+    submit.disabled = false;
+    submit.textContent = original;
+  });
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
     var bad = [], first = null;
     ['nombre', 'negocio', 'contacto'].forEach(function (n) { f[n].value = clean(f[n].value); });
@@ -307,23 +321,16 @@
       if (first) first.focus(); return;
     }
     errEl.hidden = true;
-    var data = {}; ['nombre', 'negocio', 'tipo', 'canal', 'contacto', 'nota'].forEach(function (n) { data[n] = f[n].value; });
-    data.tipo = selectedText('tipo');
-    data.canal = selectedText('canal');
     if (submit.disabled) return;
     submit.disabled = true;
-    var original = submit.textContent;
-    submit.textContent = LANG === 'en' ? 'Sending…' : 'Enviando…';
+    submit.textContent = LANG === 'en' ? 'Continue to verification…' : 'Continuando a la verificación…';
     try {
-      var response = await fetch(CFG.ENDPOINT, {
-        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({name: data.nombre, business: data.negocio, email: data.contacto, service: data.tipo, message: data.nota, language: LANG, _gotcha: form.elements._gotcha.value})
-      });
-      if (!response.ok) throw new Error('Submission failed');
-      form.reset(); form.hidden = true; sent.hidden = false; sent.focus();
+      HTMLFormElement.prototype.submit.call(form);
     } catch (error) {
-      errEl.textContent = LANG === 'en' ? 'Your message could not be sent. Please try again or email me directly.' : 'No se pudo enviar tu mensaje. Inténtalo de nuevo o escríbeme directamente por correo.';
+      errEl.textContent = LANG === 'en' ? 'Unable to open verification. Please try again or email me directly.' : 'No se pudo abrir la verificación. Inténtalo de nuevo o escríbeme directamente por correo.';
       errEl.hidden = false;
-    } finally { submit.disabled = false; submit.textContent = original; }
+      submit.disabled = false;
+      submit.textContent = original;
+    }
   });
 })();
