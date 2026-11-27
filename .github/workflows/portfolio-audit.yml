@@ -54,9 +54,11 @@ jobs:
                       page.route('https://gc.zgo.at/**',lambda route: route.fulfill(status=200,body='',content_type='application/javascript'))
                       page.route('https://jormanj2b.goatcounter.com/**',lambda route: route.fulfill(status=200,body=''))
                       submissions=[]
+                      # Stub only the browser API locally; no real CAPTCHA token or email is generated.
+                      page.route('https://www.google.com/recaptcha/api.js?**',lambda route: route.fulfill(status=200,content_type='application/javascript',body="""window.grecaptcha={render:function(el){el.textContent='Mock verification';return 0},getResponse:function(){return window.__testCaptchaToken||''},reset:function(){window.__testCaptchaToken=''}};window.portfolioCaptchaReady();"""))
                       def intercept(route):
-                          submissions.append({k:v[0] for k,v in parse_qs(route.request.post_data or '',keep_blank_values=True).items()})
-                          route.fulfill(status=200,content_type='text/html',body='<html><body><h1 id="mock-captcha">Mock verification, no mail sent</h1></body></html>')
+                          submissions.append(route.request.post_data_json)
+                          route.fulfill(status=200,content_type='application/json',body='{"ok":true}',headers={'access-control-allow-origin':'*'})
                       page.route('https://formspree.io/f/mkjredvr',intercept)
                       page.goto(base+slug,wait_until='networkidle')
                       reject=page.get_by_role('button',name='Rechazar todas' if lang=='es' else 'Reject all',exact=True)
@@ -90,14 +92,17 @@ jobs:
                       page.locator('[name=contacto]').fill('test@example.com')
                       page.locator('[name=nota]').fill('Automated test; intercepted locally.')
                       page.locator('#contacto-form button[type=submit]').click()
-                      page.locator('#mock-captcha').wait_for(state='visible',timeout=10000)
-                      form_ok=len(submissions)==1 and submissions[0].get('email')=='test@example.com' and submissions[0].get('language')==lang
+                      captcha_blocked=not submissions and page.locator('#form-error').is_visible()
+                      page.evaluate("window.__testCaptchaToken='local-mock-only'")
+                      page.locator('#contacto-form button[type=submit]').click()
+                      page.locator('#enviado').wait_for(state='visible',timeout=10000)
+                      form_ok=len(submissions)==1 and submissions[0].get('email')=='test@example.com' and submissions[0].get('language')==lang and submissions[0].get('g-recaptcha-response')=='local-mock-only'
                       page.goto(base+slug+'#contacto')
                       other='EN' if lang=='es' else 'ES'
                       link=page.locator('.lang a').filter(has_text=other)
                       link.click()
                       switch_ok=page.url.endswith(('/en/' if lang=='es' else '/')+'#contacto')
-                      result={'language':lang,'width':width,'height':height,'overflow':overflow,'broken_images':bad_images,'active_language':active,'project_links':linkcount,'analytics_before_consent':before,'analytics_after_reject':after,'empty_form_blocked':invalid_blocked,'name_filter':name_filter,'bad_email_blocked':email_blocked,'mock_submission_ok':form_ok,'switch_preserves_anchor':switch_ok,'page_errors':errors,'axe_violations':[{'id':v['id'],'impact':v['impact'],'description':v['description'],'nodes':[n['target'] for n in v['nodes']]} for v in a['violations']]}
+                      result={'language':lang,'width':width,'height':height,'overflow':overflow,'broken_images':bad_images,'active_language':active,'project_links':linkcount,'analytics_before_consent':before,'analytics_after_reject':after,'empty_form_blocked':invalid_blocked,'name_filter':name_filter,'bad_email_blocked':email_blocked,'captcha_missing_blocked':captcha_blocked,'mock_submission_ok':form_ok,'switch_preserves_anchor':switch_ok,'page_errors':errors,'axe_violations':[{'id':v['id'],'impact':v['impact'],'description':v['description'],'nodes':[n['target'] for n in v['nodes']]} for v in a['violations']]}
                       results.append(result)
                       print(json.dumps(result,ensure_ascii=False),flush=True)
                       (out/'browser-results.json').write_text(json.dumps(results,ensure_ascii=False,indent=2))
