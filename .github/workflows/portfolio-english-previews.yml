@@ -1,10 +1,6 @@
 name: Generate English project previews
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/portfolio-english-previews.yml'
 permissions:
   contents: write
 concurrency:
