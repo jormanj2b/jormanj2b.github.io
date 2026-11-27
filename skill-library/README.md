@@ -50,3 +50,9 @@ Vercel: la licencia MIT está declarada en el README del repositorio de skills; 
 Para cada proyecto, usar Premium Web Design al crear o rediseñar, consultar Thekorn cuando sea útil para dirección artística, Visual Quality Review al revisar el resultado renderizado, Vercel al comprobar código de interfaz y Stop Slop al revisar textos. No aplicar reglas de estilo mecánicamente si perjudican accesibilidad, precisión o requisitos del cliente. Las tres alternativas restantes quedan en reserva, sin incorporar.
 
 Las guías son referencias disponibles en esta rama, no una instalación global o persistente en ChatGPT ni en el ordenador del usuario.
+
+## Guía complementaria de diseño aprobada
+
+- **Design Craft Playbook** — `ready/design-craft-playbook/SKILL.md`. Versión escaneada: `ecf939d51845178eda95a08fbe57f3f6aa488246`. [SkillSpector](https://github.com/jormanj2b/jormanj2b.github.io/actions/runs/46011790530): SAFE, riesgo 0/100, cobertura completa 100%, sin hallazgos. Copia verificada por SHA del archivo.
+- Activación selectiva para dirección artística por sector, sistemas de diseño, composición, refinamiento y revisión responsive. Complementa Premium Web Design y Visual Quality Review; no requiere scripts ni instalaciones externas.
+- Taste Skill, Impeccable, UI UX Pro Max y Awesome Design MD completos permanecen bloqueados. La guía sintetiza principios generales sin incorporar sus ejecutables.
