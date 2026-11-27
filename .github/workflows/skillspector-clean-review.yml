@@ -1,0 +1,153 @@
+name: SkillSpector clean bundle review
+on:
+  push:
+    branches: ['security/skillspector']
+    paths: ['.github/workflows/skillspector-clean-review.yml']
+  workflow_dispatch:
+permissions: {}
+jobs:
+  scan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include:
+          - id: skillevaluator
+            source: NVIDIA/SkillEvaluator
+            revision: 5efcbacc3f4022b0786b4a97c7eacb90ad5ca7d3
+            scope: 'skills/skillevaluator'
+            kind: single
+          - id: cloudflare-audit
+            source: cloudflare/security-audit-skill
+            revision: c1c8a8c1471069fb0e188eeaff69b8e8db6564a8
+            scope: 'skills/security-audit'
+            kind: single
+          - id: sast
+            source: utkusen/sast-skills
+            revision: 3a5bf8f0efe31d1d4731c164ca86abd9a3bbd166
+            scope: 'sast-files/.agents/skills'
+            kind: recursive
+          - id: playwright
+            source: microsoft/playwright-cli
+            revision: dc5f4d5616ab5a28ded12fd7101a4d49bd59a820
+            scope: 'skills/playwright-cli'
+            kind: single
+          - id: taste
+            source: Leonxlnx/taste-skill
+            revision: 952435f63acece7d2fcb4b4d3c1786c1c43603e0
+            scope: 'skills/taste-skill'
+            kind: single
+          - id: impeccable
+            source: pbakaus/impeccable
+            revision: 2fc5e1459efbbf06d92c7306517c286bf12490cf
+            scope: '.agents/skills/impeccable'
+            kind: single
+          - id: ui-ux
+            source: nextlevelbuilder/ui-ux-pro-max-skill
+            revision: 11ca2b3bdd555649f278ee348c32a9302b24dcf1
+            scope: '.claude/skills'
+            kind: recursive
+          - id: design-reference
+            source: VoltAgent/awesome-design-md
+            revision: fcc70284932276d085f01ef9f83edde90b1258cb
+            scope: '.'
+            kind: reference
+          - id: stop-slop
+            source: hardikpandya/stop-slop
+            revision: 8da1f030185bdfe8471220585162991eaeb970e9
+            scope: '.'
+            kind: single
+          - id: first-customer
+            source: Kappaemme-git/codex-first-customer-finder-skill
+            revision: d3f6964bd989745ac183edbd545c588a68451146
+            scope: 'first-customer-finder'
+            kind: single
+          - id: sales-team
+            source: zubair-trabzada/ai-sales-team-claude
+            revision: efef8b8a4ce8c93d8d6b4af9d1423db38f0de2ce
+            scope: 'skills'
+            kind: recursive
+          - id: sales-entrypoint
+            source: zubair-trabzada/ai-sales-team-claude
+            revision: efef8b8a4ce8c93d8d6b4af9d1423db38f0de2ce
+            scope: 'sales'
+            kind: single
+    env:
+      SOURCE: ${{ matrix.source }}
+      REVISION: ${{ matrix.revision }}
+      SCOPE: ${{ matrix.scope }}
+      KIND: ${{ matrix.kind }}
+    steps:
+      - name: Install verified scanner version
+        run: |
+          python3 -m venv /tmp/skillspector
+          /tmp/skillspector/bin/python -m pip install 'git+https://github.com/NVIDIA/SkillSpector.git@02894ec5b8a0a70637df5a6b45763de92940cedd'
+          /tmp/skillspector/bin/skillspector --version
+      - name: Fetch pinned source as data only
+        run: |
+          mkdir -p "$RUNNER_TEMP/skill-source" "$RUNNER_TEMP/skill-report"
+          cd "$RUNNER_TEMP/skill-source"
+          git init -q
+          git remote add origin "https://github.com/$SOURCE.git"
+          if [ "$SCOPE" != "." ]; then
+            git sparse-checkout init --cone
+            git sparse-checkout set "$SCOPE"
+          fi
+          git -c protocol.file.allow=never fetch --depth=1 --filter=blob:none origin "$REVISION"
+          git -c core.hooksPath=/dev/null -c submodule.recurse=false checkout --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$REVISION"
+          test -d "$SCOPE"
+          # Export the exact tracked tree, not Git internals or a hand-filtered subset.
+          mkdir -p "$RUNNER_TEMP/clean-source"
+          if [ "$SCOPE" = "." ]; then
+            git ls-tree -r HEAD > "$RUNNER_TEMP/skill-report/tree.txt"
+            git archive --format=tar HEAD | tar -xf - -C "$RUNNER_TEMP/clean-source"
+          else
+            git ls-tree -r HEAD -- "$SCOPE" > "$RUNNER_TEMP/skill-report/tree.txt"
+            git archive --format=tar HEAD "$SCOPE" | tar -xf - -C "$RUNNER_TEMP/clean-source"
+          fi
+          if grep -Eq '^160000 ' "$RUNNER_TEMP/skill-report/tree.txt"; then
+            echo "Submodule content is not covered; do not approve."
+            exit 1
+          fi
+          test ! -e "$RUNNER_TEMP/clean-source/.git"
+          test -d "$RUNNER_TEMP/clean-source/$SCOPE"
+          printf '%s\n' "$SOURCE" "$REVISION" "$SCOPE" "$KIND" > "$RUNNER_TEMP/skill-report/scope.txt"
+      - name: Scan without running candidate code
+        run: |
+          cd "$RUNNER_TEMP/clean-source"
+          out="$RUNNER_TEMP/skill-report"
+          args=(scan "$SCOPE" --no-llm --fail-on-incomplete --format json --output "$out/report.json")
+          if [ "$KIND" = recursive ]; then args+=(--recursive --max-skills 32); fi
+          set +e
+          /tmp/skillspector/bin/skillspector "${args[@]}" > "$out/scanner.log" 2>&1
+          status=$?
+          set -e
+          printf '%s\n' "$status" > "$out/exit-code.txt"
+          echo "Scanner exit code: $status (not an installation approval)"
+          if [ -s "$out/report.json" ]; then
+            python3 - "$out/report.json" <<'PY'
+          import json,sys,collections
+          r=json.load(open(sys.argv[1]))
+          print("RESULT",json.dumps({k:r.get(k) for k in ('risk_assessment','max_risk_score','risk_recommendation','risk_severity','skill_count','skills_scanned','skills_omitted','execution_successful') if k in r},ensure_ascii=True))
+          for item in r.get('skills',[r]):
+              cov=item.get('analysis_completeness',{})
+              issues=item.get('issues',[])
+              print("BUNDLE",json.dumps({'name':item.get('name',item.get('skill',{}).get('name','single') if isinstance(item.get('skill'),dict) else 'single'),'assessment':item.get('risk_assessment'),'coverage':{k:cov.get(k) for k in ('status','is_complete','coverage_percent','fully_inspected_files','partially_inspected_files','entirely_uninspected_files')},'rules':dict(collections.Counter(i.get('id') for i in issues))},ensure_ascii=True))
+              for i in issues:
+                  if i.get('severity') in ('HIGH','CRITICAL'):
+                      print("FINDING",json.dumps({k:i.get(k) for k in ('id','severity','category','location','pattern','finding')},ensure_ascii=True)[:1200])
+          PY
+          else
+            echo "No JSON report produced. Review scanner.log; candidate is NOT approved."
+          fi
+      - name: Preserve evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: skillspector-${{ matrix.id }}
+          path: ${{ runner.temp }}/skill-report/
+          if-no-files-found: warn
+          retention-days: 14
