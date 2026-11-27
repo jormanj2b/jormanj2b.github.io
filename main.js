@@ -163,9 +163,10 @@
   var assetBase = thisScript ? thisScript.src.replace(/main\.js(\?.*)?$/, '') : '';
   if (!document.querySelector('script[src*="cookies.js"]')) {
     var ck = document.createElement('script');
-    ck.src = assetBase + 'cookies.js?v=2'; ck.defer = true;
+    ck.src = assetBase + 'cookies.js?v=3'; ck.defer = true;
     ck.dataset.key = 'raiz'; ck.dataset.owner = 'Jorman Bravo'; ck.dataset.accent = '#1E33A8';
     ck.dataset.lang = LANG;
+    ck.dataset.analitica = LANG === 'en' ? 'GoatCounter counts visits in aggregate without analytics cookies. It loads only if you allow analytics.' : 'GoatCounter cuenta visitas de forma agregada sin cookies de analítica. Solo se carga si permites la analítica.';
     ck.dataset.policy = LANG === 'en' ? '/en/cookies.html' : '/cookies.html';
     document.head.appendChild(ck);
   }
