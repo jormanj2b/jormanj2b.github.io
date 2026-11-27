@@ -9,7 +9,7 @@
 <link rel="alternate" hreflang="es" href="https://jormanbravo.com/">
 <link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/">
 <link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://jormanj2b.goatcounter.com; style-src 'self'; script-src 'self' https://gc.zgo.at; font-src 'self'; connect-src 'self' https://jormanj2b.goatcounter.com https://formspree.io; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://jormanj2b.goatcounter.com; style-src 'self'; script-src 'self' https://gc.zgo.at https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/; font-src 'self'; connect-src 'self' https://jormanj2b.goatcounter.com https://formspree.io https://www.google.com/recaptcha/; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#FBF6EC">
 <meta property="og:type" content="website">
@@ -24,8 +24,8 @@
 <link rel="preload" href="../fonts/bricolage-grotesque-normal-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" href="../img/jorman-480.webp" imagesrcset="../img/jorman-480.webp 480w, ../img/jorman-800.webp 800w" imagesizes="(min-width: 960px) 360px, 240px">
 <link rel="stylesheet" href="../fonts.css">
-<link rel="stylesheet" href="../styles.css?v12">
-<script src="../main.js?v14" defer></script>
+<link rel="stylesheet" href="../styles.css?v13">
+<script src="../main.js?v15" defer></script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"Person","@id":"https://jormanbravo.com/#jorman","name":"Jorman Bravo","jobTitle":"Freelance web developer","address":{"@type":"PostalAddress","addressCountry":"VE"},"image":"https://jormanbravo.com/img/jorman-192.webp","url":"https://jormanbravo.com/","sameAs":["https://www.freelancer.es/u/Jormanbm","https://www.workana.com/freelancer/8dcdf0132579d745c3b581b075f9bce9","https://github.com/jormanj2b","https://www.linkedin.com/in/jorman-jose-bravo-mota-69783335a/"],"knowsLanguage":["es","en"]},
@@ -312,9 +312,14 @@
         <label class="wide">Anything else (optional)<textarea name="nota" rows="3" maxlength="600"></textarea></label>
       </div>
     </fieldset>
+    <div class="captcha-section" aria-label="Security verification">
+      <button id="captcha-load" class="btn btn-line btn-small" type="button">Load security check</button>
+      <div id="captcha-widget" class="captcha-widget" data-sitekey="6LfOPzUuAAAAAO-b70x6EFmyF3jH6h1vQvFD8jiY"></div>
+      <p id="captcha-status" class="captcha-status" role="status"></p>
+      <p class="small">Google reCAPTCHA protects this form. <a href="cookies.html">Privacy details</a>.</p>
+    </div>
     <p class="form-error" id="form-error" role="alert" hidden></p>
     <button class="btn btn-big" type="submit">Send message</button>
-    <p class="small">After submitting, Formspree may ask you to complete a security check.</p>
   </form>
   <div class="booked" id="enviado" tabindex="-1" role="status" hidden>
     <h3>Message sent successfully!</h3>
