@@ -166,7 +166,7 @@ jobs:
           axe=Path('/tmp/demo-audit/node_modules/axe-core/axe.min.js').read_text()
           results=[]
           slugs=['laborathorno-demo','demo-barberia','demo-cafe','demo-tienda','demo-asesoria','demo-gimnasio']
-          versions={'laborathorno-demo':'styles.css?v=4','demo-tienda':'styles.css?v=5'}
+          versions={'laborathorno-demo':'styles.css?v=5','demo-tienda':'styles.css?v=5'}
           def verify_release(item):
               slug,lang,marker=item
               url='https://jormanbravo.com/'+slug+'/'+('en/' if lang=='en' else '')
@@ -231,6 +231,8 @@ jobs:
                               page.evaluate('Promise.allSettled(Array.from(document.images).map(i=>{i.loading="eager";return i.decode()}))')
                               page.wait_for_timeout(300)
                               result['overflow']=page.evaluate('document.documentElement.scrollWidth>innerWidth+1')
+                              if result['overflow']:
+                                  result['overflow_elements']=page.evaluate("""()=>[...document.querySelectorAll('body *')].map(e=>({e,r:e.getBoundingClientRect()})).filter(({e,r})=>r.width>0&&r.right>innerWidth+1&&getComputedStyle(e).visibility==='visible'&&!e.closest('.ribbon,.cart-drawer,.section,.hero,.volume,.site-footer,svg')).map(({e,r})=>({tag:e.tagName,cls:String(e.className),right:Math.round(r.right)})).slice(0,30)""")
                               result['broken_images']=page.evaluate('Array.from(document.images).filter(i=>!i.complete||i.naturalWidth===0).map(i=>i.getAttribute("src"))')
                               if slug=='demo-tienda':
                                   result['oil_image_loaded']=page.evaluate("Array.from(document.images).filter(i=>i.src.includes('aceitera')).some(i=>i.complete && i.naturalWidth>0)")
