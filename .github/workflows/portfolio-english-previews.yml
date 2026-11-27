@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   capture:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -50,6 +50,7 @@ jobs:
                       response = page.goto('https://jormanbravo.com/' + slug, wait_until='domcontentloaded', timeout=45000)
                       assert response and response.ok, f'{slug}: navigation failed'
                       page.wait_for_selector('h1', state='visible', timeout=15000)
+                      print(name, 'mobile' if mobile else 'desktop', page.locator('h1').first.inner_text(), flush=True)
                       assert page.locator('html').get_attribute('lang').lower().startswith('en'), f'{slug}: not English'
                       page.evaluate('document.fonts.ready')
                       for label in ['Reject all', 'Reject all cookies']:
@@ -88,4 +89,5 @@ jobs:
           git add img/*-en-480.webp img/*-en-960.webp img/*-en-movil.webp en/index.html
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "Use real English desktop and mobile previews"
+          git pull --rebase origin main
           git push origin HEAD:main
