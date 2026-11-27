@@ -170,11 +170,16 @@
     document.head.appendChild(ck);
   }
 
-  /* El conmutador ES/EN conserva el ancla (#contacto, #servicios, …). */
-  Array.prototype.forEach.call(document.querySelectorAll('.lang a[href]'), function (a) {
+  /* Preserve the current section when changing language, not just the initial hash. */
+  Array.prototype.forEach.call(document.querySelectorAll('.top .lang a[href]'), function (a) {
     var href = a.getAttribute('href') || '';
-    if (!location.hash || href.indexOf('cookies') !== -1 || href.indexOf('#') !== -1) return;
-    a.setAttribute('href', href + location.hash);
+    function sync() {
+      var hash = location.hash;
+      a.setAttribute('href', href + (hash && document.getElementById(hash.slice(1)) ? hash : ''));
+    }
+    sync();
+    window.addEventListener('hashchange', sync);
+    a.addEventListener('click', sync);
   });
 
   /* Enlaces viejos a #agenda caen en el formulario de contacto. */
