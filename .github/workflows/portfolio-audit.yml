@@ -1,0 +1,127 @@
+name: Portfolio quality audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/portfolio-audit.yml'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install audit tools
+        run: |
+          python -m pip install playwright==1.51.0
+          python -m playwright install --with-deps chromium
+          npm install --prefix /tmp/portfolio-audit axe-core@4.10.3 lighthouse@12.3.0
+      - name: Start local server
+        run: |
+          mkdir -p audit
+          python -m http.server 8000 --bind 127.0.0.1 > /tmp/portfolio-server.log 2>&1 &
+          curl --retry 10 --retry-connrefused --retry-delay 1 -fsS http://127.0.0.1:8000/ >/dev/null
+      - name: Browser and accessibility checks
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          out=Path('audit')
+          axe=Path('/tmp/portfolio-audit/node_modules/axe-core/axe.min.js').read_text()
+          results=[]
+          base='http://127.0.0.1:8000'
+          with sync_playwright() as p:
+              browser=p.chromium.launch()
+              for lang,slug in [('es','/'),('en','/en/')]:
+                  for width,height in [(375,812),(768,1024),(1440,900)]:
+                      context=browser.new_context(viewport={'width':width,'height':height},reduced_motion='reduce')
+                      page=context.new_page()
+                      errors=[]
+                      requests=[]
+                      page.on('pageerror',lambda e: errors.append(str(e)))
+                      page.on('request',lambda r: requests.append(r.url))
+                      # No live submissions or analytics hits during automated testing.
+                      page.route('https://gc.zgo.at/**',lambda route: route.fulfill(status=200,body='',content_type='application/javascript'))
+                      page.route('https://jormanj2b.goatcounter.com/**',lambda route: route.fulfill(status=200,body=''))
+                      submissions=[]
+                      def intercept(route):
+                          submissions.append(route.request.post_data_json)
+                          route.fulfill(status=200,content_type='application/json',body='{"ok":true}',headers={'access-control-allow-origin':'*'})
+                      page.route('https://formspree.io/f/mkjredvr',intercept)
+                      page.goto(base+slug,wait_until='networkidle')
+                      reject=page.get_by_role('button',name='Rechazar todas' if lang=='es' else 'Reject all',exact=True)
+                      reject.wait_for(state='visible',timeout=10000)
+                      before=any('gc.zgo.at' in u for u in requests)
+                      reject.click()
+                      page.wait_for_timeout(300)
+                      after=any('gc.zgo.at' in u for u in requests)
+                      page.evaluate('document.fonts.ready')
+                      page.locator('footer').scroll_into_view_if_needed()
+                      page.wait_for_timeout(300)
+                      page.evaluate('Promise.all(Array.from(document.images).map(i => { i.loading="eager"; return i.decode().catch(()=>{}); }))')
+                      page.evaluate('scrollTo(0,0)')
+                      page.screenshot(path=str(out/f'{lang}-{width}.png'),full_page=True)
+                      page.evaluate(axe)
+                      a=page.evaluate('async () => await axe.run({runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21a","wcag21aa"]}})')
+                      bad_images=page.evaluate('Array.from(document.images).filter(i => !i.complete || i.naturalWidth===0).map(i => i.getAttribute("src"))')
+                      overflow=page.evaluate('document.documentElement.scrollWidth>innerWidth+1')
+                      active=page.locator('.lang a[aria-current="page"]').inner_text()
+                      linkcount=page.locator('.project .go-row a.go:not(.go-alt)').count()
+                      page.locator('#contacto-form button[type=submit]').click()
+                      invalid_blocked=not submissions and page.locator('#form-error').is_visible()
+                      page.locator('[name=nombre]').fill('123')
+                      name_filter=page.locator('[name=nombre]').input_value()==''
+                      page.locator('[name=nombre]').fill('Test User')
+                      page.locator('[name=negocio]').fill('Test business')
+                      page.locator('[name=tipo]').select_option(index=1)
+                      page.locator('[name=contacto]').fill('invalid')
+                      page.locator('#contacto-form button[type=submit]').click()
+                      email_blocked=not submissions and page.locator('#form-error').is_visible()
+                      page.locator('[name=contacto]').fill('test@example.com')
+                      page.locator('[name=nota]').fill('Automated test; intercepted locally.')
+                      page.locator('#contacto-form button[type=submit]').click()
+                      page.locator('#enviado').wait_for(state='visible',timeout=10000)
+                      form_ok=len(submissions)==1 and submissions[0].get('email')=='test@example.com' and submissions[0].get('language')==lang
+                      page.goto(base+slug+'#contacto')
+                      other='EN' if lang=='es' else 'ES'
+                      link=page.locator('.lang a').filter(has_text=other)
+                      link.click()
+                      switch_ok=page.url.endswith(('/en/' if lang=='es' else '/')+'#contacto')
+                      result={'language':lang,'width':width,'height':height,'overflow':overflow,'broken_images':bad_images,'active_language':active,'project_links':linkcount,'analytics_before_consent':before,'analytics_after_reject':after,'empty_form_blocked':invalid_blocked,'name_filter':name_filter,'bad_email_blocked':email_blocked,'mock_submission_ok':form_ok,'switch_preserves_anchor':switch_ok,'page_errors':errors,'axe_violations':[{'id':v['id'],'impact':v['impact'],'description':v['description'],'nodes':[n['target'] for n in v['nodes']]} for v in a['violations']]}
+                      results.append(result)
+                      print(json.dumps(result,ensure_ascii=False),flush=True)
+                      (out/'browser-results.json').write_text(json.dumps(results,ensure_ascii=False,indent=2))
+                      context.close()
+              browser.close()
+          PY
+      - name: Lighthouse mobile audit
+        if: always()
+        run: |
+          export CHROME_PATH="$(python -c 'from playwright.sync_api import sync_playwright; p=sync_playwright().start(); print(p.chromium.executable_path); p.stop()')"
+          for lang in es en; do
+            path=/
+            if [ "$lang" = en ]; then path=/en/; fi
+            /tmp/portfolio-audit/node_modules/.bin/lighthouse "http://127.0.0.1:8000${path}" --chrome-flags="--headless --no-sandbox" --output=json --output-path="audit/lighthouse-${lang}.json" --quiet || true
+          done
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for f in Path('audit').glob('lighthouse-*.json'):
+              data=json.loads(f.read_text())
+              print(f.name, {k:round(v['score']*100) if v['score'] is not None else None for k,v in data['categories'].items()})
+          PY
+      - name: Upload audit reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-audit
+          path: audit/
