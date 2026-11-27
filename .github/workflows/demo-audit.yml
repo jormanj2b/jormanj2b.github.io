@@ -1,0 +1,88 @@
+name: Six demo quality audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/demo-audit.yml'
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install browser and axe
+        run: |
+          python -m pip install playwright==1.51.0
+          python -m playwright install --with-deps chromium
+          npm install --prefix /tmp/demo-audit axe-core@4.10.3
+      - name: Inspect all six bilingual demos without submitting forms
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          out=Path('demo-audit')
+          out.mkdir(exist_ok=True)
+          axe=Path('/tmp/demo-audit/node_modules/axe-core/axe.min.js').read_text()
+          results=[]
+          slugs=['laborathorno-demo','demo-barberia','demo-cafe','demo-tienda','demo-asesoria','demo-gimnasio']
+          with sync_playwright() as p:
+              browser=p.chromium.launch()
+              for slug in slugs:
+                  for lang in ('es','en'):
+                      for w,h in [(375,812),(768,1024),(1440,900)]:
+                          c=browser.new_context(viewport={'width':w,'height':h},reduced_motion='reduce')
+                          page=c.new_page()
+                          errors=[]
+                          page.on('pageerror',lambda e: errors.append(str(e)))
+                          # Read only: block all non-GET/HEAD requests, analytics and off-site requests.
+                          def guard(route):
+                              req=route.request
+                              if req.method not in ('GET','HEAD') or not req.url.startswith('https://jormanbravo.com/'):
+                                  route.abort()
+                              else:
+                                  route.continue_()
+                          page.route('**/*',guard)
+                          url='https://jormanbravo.com/'+slug+'/'+('en/' if lang=='en' else '')
+                          result={'demo':slug,'language':lang,'width':w}
+                          try:
+                              res=page.goto(url,wait_until='domcontentloaded',timeout=30000)
+                              page.wait_for_timeout(500)
+                              result['status']=res.status if res else None
+                              result['actual_lang']=page.locator('html').get_attribute('lang')
+                              result['title']=page.title()
+                              for label in ['Reject all','Rechazar todas','Reject all cookies','Rechazar todas las cookies']:
+                                  b=page.get_by_role('button',name=label,exact=True).first
+                                  if b.is_visible():
+                                      b.click()
+                                      break
+                              page.evaluate('document.fonts.ready')
+                              page.evaluate('Promise.all(Array.from(document.images).map(i=>{i.loading="eager";return i.decode().catch(()=>{})}))')
+                              result['overflow']=page.evaluate('document.documentElement.scrollWidth>innerWidth+1')
+                              result['broken_images']=page.evaluate('Array.from(document.images).filter(i=>!i.complete||i.naturalWidth===0).map(i=>i.getAttribute("src"))')
+                              result['h1_count']=page.locator('h1').count()
+                              result['canonical']=page.locator('link[rel=canonical]').first.get_attribute('href') if page.locator('link[rel=canonical]').count() else None
+                              page.evaluate(axe)
+                              a=page.evaluate('async()=>await axe.run({runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21a","wcag21aa"]}})')
+                              result['axe']=[{'id':v['id'],'impact':v['impact'],'nodes':[n['target'] for n in v['nodes']]} for v in a['violations']]
+                              result['page_errors']=errors
+                              page.screenshot(path=str(out/f'{slug}-{lang}-{w}.png'),full_page=False)
+                          except Exception as exc:
+                              result['error']=str(exc)
+                          print(json.dumps(result,ensure_ascii=False),flush=True)
+                          results.append(result)
+                          (out/'results.json').write_text(json.dumps(results,ensure_ascii=False,indent=2))
+                          c.close()
+              browser.close()
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: demo-audit
+          path: demo-audit/
