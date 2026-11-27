@@ -306,7 +306,7 @@
       captchaLoad.disabled = false;
       captchaLoad.hidden = false;
       if (captchaScript) { captchaScript.remove(); captchaScript = null; }
-      captchaMessage(LANG === 'en' ? 'Could not load the security check. Retry or email me directly.' : 'No se pudo cargar la verificación. Reintenta o escríbeme por correo.');
+      captchaMessage(LANG === 'en' ? 'Could not load the security check. Retry or use one of the contact platforms above.' : 'No se pudo cargar la verificación. Reintenta o utiliza una de las plataformas de contacto de arriba.');
     }
     window.portfolioCaptchaReady = function () {
       try {
@@ -315,7 +315,7 @@
           size: captchaBox.clientWidth < 304 ? 'compact' : 'normal',
           callback: function () { captchaMessage(''); },
           'expired-callback': function () { captchaMessage(LANG === 'en' ? 'Verification expired. Please try again.' : 'La verificación caducó. Inténtalo de nuevo.'); },
-          'error-callback': function () { captchaMessage(LANG === 'en' ? 'Security check unavailable. Please retry or email me.' : 'Verificación no disponible. Reintenta o escríbeme por correo.'); }
+          'error-callback': function () { captchaMessage(LANG === 'en' ? 'Security check unavailable. Please retry or use one of the contact platforms above.' : 'Verificación no disponible. Reintenta o escríbeme por correo.'); }
         });
         captchaLoading = false; captchaLoad.hidden = true; captchaMessage('');
       } catch (error) { failed(); }
@@ -372,7 +372,7 @@
       if (!response.ok || result.ok !== true) throw new Error('Submission not confirmed');
       form.reset(); form.hidden = true; sent.hidden = false; sent.focus();
     } catch (error) {
-      errEl.textContent = LANG === 'en' ? 'Your message could not be sent. Complete the security check again and retry, or email me directly.' : 'No se pudo enviar tu mensaje. Repite la verificación e inténtalo de nuevo o escríbeme directamente.';
+      errEl.textContent = LANG === 'en' ? 'Your message could not be sent. Complete the security check again and retry, or use one of the contact platforms above.' : 'No se pudo enviar tu mensaje. Repite la verificación e inténtalo de nuevo o utiliza una de las plataformas de contacto de arriba.';
       errEl.hidden = false;
     } finally {
       if (captchaId !== null && window.grecaptcha) window.grecaptcha.reset(captchaId);
