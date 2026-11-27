@@ -290,24 +290,53 @@
   });
   f.tipo.addEventListener('change', function () { show('tipo', RULES.tipo(f.tipo.value)); });
 
-  // Native POST allows Formspree to show its hosted CAPTCHA and confirmation.
-  form.addEventListener('formdata', function (e) {
-    var data = e.formData;
-    var names = { nombre: 'name', negocio: 'business', contacto: 'email', tipo: 'service', nota: 'message' };
-    Object.keys(names).forEach(function (key) {
-      if (data.has(key)) { data.set(names[key], data.get(key)); data.delete(key); }
+  // Load the required security service only when the visitor uses the form.
+  var captchaBox = document.getElementById('captcha-widget');
+  var captchaLoad = document.getElementById('captcha-load');
+  var captchaStatus = document.getElementById('captcha-status');
+  var captchaId = null, captchaLoading = false, captchaScript = null;
+  function captchaMessage(message) { if (captchaStatus) captchaStatus.textContent = message; }
+  function loadCaptcha() {
+    if (!captchaBox || captchaLoading || captchaId !== null) return;
+    captchaLoading = true;
+    captchaLoad.disabled = true;
+    captchaMessage(LANG === 'en' ? 'Loading security check…' : 'Cargando verificación…');
+    function failed() {
+      captchaLoading = false;
+      captchaLoad.disabled = false;
+      captchaLoad.hidden = false;
+      if (captchaScript) { captchaScript.remove(); captchaScript = null; }
+      captchaMessage(LANG === 'en' ? 'Could not load the security check. Retry or email me directly.' : 'No se pudo cargar la verificación. Reintenta o escríbeme por correo.');
+    }
+    window.portfolioCaptchaReady = function () {
+      try {
+        captchaId = window.grecaptcha.render(captchaBox, {
+          sitekey: captchaBox.dataset.sitekey,
+          size: captchaBox.clientWidth < 304 ? 'compact' : 'normal',
+          callback: function () { captchaMessage(''); },
+          'expired-callback': function () { captchaMessage(LANG === 'en' ? 'Verification expired. Please try again.' : 'La verificación caducó. Inténtalo de nuevo.'); },
+          'error-callback': function () { captchaMessage(LANG === 'en' ? 'Security check unavailable. Please retry or email me.' : 'Verificación no disponible. Reintenta o escríbeme por correo.'); }
+        });
+        captchaLoading = false; captchaLoad.hidden = true; captchaMessage('');
+      } catch (error) { failed(); }
+    };
+    captchaScript = document.createElement('script');
+    captchaScript.src = 'https://www.google.com/recaptcha/api.js?onload=portfolioCaptchaReady&render=explicit&hl=' + LANG;
+    captchaScript.async = true;
+    captchaScript.onerror = failed;
+    document.head.appendChild(captchaScript);
+  }
+  if (captchaLoad) {
+    captchaLoad.addEventListener('click', loadCaptcha);
+    form.addEventListener('focusin', function (event) {
+      if (event.target.matches('input:not([type=hidden]), select, textarea')) loadCaptcha();
     });
-    data.delete('canal');
-    data.set('language', LANG);
-  });
+  }
   form.noValidate = true;
   var original = submit.textContent;
-  window.addEventListener('pageshow', function () {
-    submit.disabled = false;
-    submit.textContent = original;
-  });
-  form.addEventListener('submit', function (e) {
+  form.addEventListener('submit', async function (e) {
     e.preventDefault();
+    if (submit.disabled) return;
     var bad = [], first = null;
     ['nombre', 'negocio', 'contacto'].forEach(function (n) { f[n].value = clean(f[n].value); });
     f.nota.value = cleanLong(f.nota.value);
@@ -321,16 +350,33 @@
       if (first) first.focus(); return;
     }
     errEl.hidden = true;
-    if (submit.disabled) return;
-    submit.disabled = true;
-    submit.textContent = LANG === 'en' ? 'Continue to verification…' : 'Continuando a la verificación…';
-    try {
-      HTMLFormElement.prototype.submit.call(form);
-    } catch (error) {
-      errEl.textContent = LANG === 'en' ? 'Unable to open verification. Please try again or email me directly.' : 'No se pudo abrir la verificación. Inténtalo de nuevo o escríbeme directamente por correo.';
+    // Older cached pages retain the original hosted verification flow.
+    if (!captchaBox) { HTMLFormElement.prototype.submit.call(form); return; }
+    var token = captchaId !== null && window.grecaptcha ? window.grecaptcha.getResponse(captchaId) : '';
+    if (!token) {
+      loadCaptcha();
+      errEl.textContent = LANG === 'en' ? 'Please complete the security check before sending.' : 'Completa la verificación de seguridad antes de enviar.';
       errEl.hidden = false;
-      submit.disabled = false;
-      submit.textContent = original;
+      captchaBox.scrollIntoView({block:'nearest'});
+      return;
+    }
+    submit.disabled = true;
+    submit.textContent = LANG === 'en' ? 'Sending…' : 'Enviando…';
+    try {
+      var response = await fetch(CFG.ENDPOINT, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json','Accept':'application/json'},
+        body: JSON.stringify({name:f.nombre.value,business:f.negocio.value,email:f.contacto.value,service:selectedText('tipo'),message:f.nota.value,language:LANG,_gotcha:f._gotcha.value,'g-recaptcha-response':token})
+      });
+      var result = await response.json();
+      if (!response.ok || result.ok !== true) throw new Error('Submission not confirmed');
+      form.reset(); form.hidden = true; sent.hidden = false; sent.focus();
+    } catch (error) {
+      errEl.textContent = LANG === 'en' ? 'Your message could not be sent. Complete the security check again and retry, or email me directly.' : 'No se pudo enviar tu mensaje. Repite la verificación e inténtalo de nuevo o escríbeme directamente.';
+      errEl.hidden = false;
+    } finally {
+      if (captchaId !== null && window.grecaptcha) window.grecaptcha.reset(captchaId);
+      submit.disabled = false; submit.textContent = original;
     }
   });
 })();
