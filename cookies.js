@@ -93,6 +93,7 @@
       if (!c || !c[s.dataset.cookieCategory] || s.dataset.done) return;
       var n = document.createElement('script');
       if (s.dataset.src) n.src = s.dataset.src; else n.textContent = s.textContent;
+      if (s.dataset.goatcounter) n.setAttribute('data-goatcounter', s.dataset.goatcounter);
       s.dataset.done = '1'; s.parentNode.insertBefore(n, s.nextSibling);
     });
     listeners.forEach(function (fn) { try { fn(c); } catch (e) {} });
