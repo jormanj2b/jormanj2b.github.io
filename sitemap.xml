@@ -15,4 +15,6 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/"/>
   </url>
+  <url><loc>https://jormanbravo.com/proyectos/</loc></url>
+  <url><loc>https://jormanbravo.com/servicios/</loc></url>
 </urlset>
