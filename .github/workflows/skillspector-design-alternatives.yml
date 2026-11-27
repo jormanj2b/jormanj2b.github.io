@@ -1,0 +1,128 @@
+name: SkillSpector design alternatives
+on:
+  push:
+    branches: ['security/skillspector']
+    paths: ['.github/workflows/skillspector-design-alternatives.yml']
+  workflow_dispatch:
+permissions: {}
+jobs:
+  scan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include:
+          - id: anthropic-design
+            source: anthropics/skills
+            revision: e4bb5d960d87126ff3b3a8af1a104b7db67560ba
+            scope: 'skills/frontend-design'
+            kind: single
+          - id: vercel-guidelines
+            source: vercel-labs/agent-skills
+            revision: 5a37a6329fbad3666c3207392a6a7c0110e92efb
+            scope: 'skills/web-design-guidelines'
+            kind: single
+          - id: practical-design
+            source: PracticalSwan/agent-skills
+            revision: 1d800c81c5af4eec2e8ed4a2bfb8adda4e76ceac
+            scope: 'frontend-design'
+            kind: single
+          - id: design-md
+            source: nolly-studio/agent-skills
+            revision: ca943286f661b3cc8edc8ddaf2bdea7ffeb6b2d1
+            scope: 'skills/design-md'
+            kind: single
+          - id: thekorn-design
+            source: thekorn/agent-skills
+            revision: 92e22ef4214449e86af2241cfa2abd6cc0b76c92
+            scope: 'skills/frontend-design'
+            kind: single
+          - id: own-premium
+            source: jormanj2b/jormanj2b.github.io
+            revision: 5db8b0ac09be6be3624c46573964aa99836f94e5
+            scope: 'skill-library/candidates/premium-web-design'
+            kind: single
+          - id: own-review
+            source: jormanj2b/jormanj2b.github.io
+            revision: 5db8b0ac09be6be3624c46573964aa99836f94e5
+            scope: 'skill-library/candidates/visual-quality-review'
+            kind: single
+    env:
+      SOURCE: ${{ matrix.source }}
+      REVISION: ${{ matrix.revision }}
+      SCOPE: ${{ matrix.scope }}
+      KIND: ${{ matrix.kind }}
+    steps:
+      - name: Install verified scanner version
+        run: |
+          python3 -m venv /tmp/skillspector
+          /tmp/skillspector/bin/python -m pip install 'git+https://github.com/NVIDIA/SkillSpector.git@02894ec5b8a0a70637df5a6b45763de92940cedd'
+          /tmp/skillspector/bin/skillspector --version
+      - name: Fetch pinned source as data only
+        run: |
+          mkdir -p "$RUNNER_TEMP/skill-source" "$RUNNER_TEMP/skill-report"
+          cd "$RUNNER_TEMP/skill-source"
+          git init -q
+          git remote add origin "https://github.com/$SOURCE.git"
+          if [ "$SCOPE" != "." ]; then
+            git sparse-checkout init --cone
+            git sparse-checkout set "$SCOPE"
+          fi
+          git -c protocol.file.allow=never fetch --depth=1 --filter=blob:none origin "$REVISION"
+          git -c core.hooksPath=/dev/null -c submodule.recurse=false checkout --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$REVISION"
+          test -d "$SCOPE"
+          # Export the exact tracked tree, not Git internals or a hand-filtered subset.
+          mkdir -p "$RUNNER_TEMP/clean-source"
+          if [ "$SCOPE" = "." ]; then
+            git ls-tree -r HEAD > "$RUNNER_TEMP/skill-report/tree.txt"
+            git archive --format=tar HEAD | tar -xf - -C "$RUNNER_TEMP/clean-source"
+          else
+            git ls-tree -r HEAD -- "$SCOPE" > "$RUNNER_TEMP/skill-report/tree.txt"
+            git archive --format=tar HEAD "$SCOPE" | tar -xf - -C "$RUNNER_TEMP/clean-source"
+          fi
+          if grep -Eq '^160000 ' "$RUNNER_TEMP/skill-report/tree.txt"; then
+            echo "Submodule content is not covered; do not approve."
+            exit 1
+          fi
+          test ! -e "$RUNNER_TEMP/clean-source/.git"
+          test -d "$RUNNER_TEMP/clean-source/$SCOPE"
+          printf '%s\n' "$SOURCE" "$REVISION" "$SCOPE" "$KIND" > "$RUNNER_TEMP/skill-report/scope.txt"
+      - name: Scan without running candidate code
+        run: |
+          cd "$RUNNER_TEMP/clean-source"
+          out="$RUNNER_TEMP/skill-report"
+          args=(scan "$SCOPE" --no-llm --fail-on-incomplete --format json --output "$out/report.json")
+          if [ "$KIND" = recursive ]; then args+=(--recursive --max-skills 32); fi
+          set +e
+          /tmp/skillspector/bin/skillspector "${args[@]}" > "$out/scanner.log" 2>&1
+          status=$?
+          set -e
+          printf '%s\n' "$status" > "$out/exit-code.txt"
+          echo "Scanner exit code: $status (not an installation approval)"
+          if [ -s "$out/report.json" ]; then
+            python3 - "$out/report.json" <<'PY'
+          import json,sys,collections
+          r=json.load(open(sys.argv[1]))
+          print("RESULT",json.dumps({k:r.get(k) for k in ('risk_assessment','max_risk_score','risk_recommendation','risk_severity','skill_count','skills_scanned','skills_omitted','execution_successful') if k in r},ensure_ascii=True))
+          for item in r.get('skills',[r]):
+              cov=item.get('analysis_completeness',{})
+              issues=item.get('issues',[])
+              print("BUNDLE",json.dumps({'name':item.get('name',item.get('skill',{}).get('name','single') if isinstance(item.get('skill'),dict) else 'single'),'assessment':item.get('risk_assessment'),'coverage':{k:cov.get(k) for k in ('status','is_complete','coverage_percent','fully_inspected_files','partially_inspected_files','entirely_uninspected_files')},'rules':dict(collections.Counter(i.get('id') for i in issues))},ensure_ascii=True))
+              for i in issues:
+                  if i.get('severity') in ('HIGH','CRITICAL'):
+                      print("FINDING",json.dumps({k:i.get(k) for k in ('id','severity','category','location','pattern','finding')},ensure_ascii=True)[:1200])
+          PY
+          else
+            echo "No JSON report produced. Review scanner.log; candidate is NOT approved."
+          fi
+      - name: Preserve evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: skillspector-${{ matrix.id }}
+          path: ${{ runner.temp }}/skill-report/
+          if-no-files-found: warn
+          retention-days: 14
