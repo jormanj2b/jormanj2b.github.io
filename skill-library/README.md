@@ -33,3 +33,20 @@ YouTube Agent Skill, AnySearch, Fabric.js e Img2ThreeJS quedan como recursos opc
 
 ## Uso de la referencia preparada
 La carpeta `ready/stop-slop/` contiene una copia fijada al commit revisado, con licencia original. Consultar solo para redacción; aplicar criterios de estilo con flexibilidad sin sacrificar veracidad ni precisión. No contiene un instalador. Para activar una skill nativamente en otro entorno, usar su mecanismo compatible tras verificar alcance y aprobación; no copiar esta rama a producción.
+
+## Diseño: selección aprobada por el usuario
+
+Escaneo: https://github.com/jormanj2b/jormanj2b.github.io/actions/runs/46011043320
+
+| Skill | Commit escaneado | Riesgo | Disponibilidad selectiva |
+|---|---|---:|---|
+| Premium Web Design | 5db8b0ac09be6be3624c46573964aa99836f94e5 | 0 | ready/premium-web-design; diseño nuevo |
+| Visual Quality Review | 5db8b0ac09be6be3624c46573964aa99836f94e5 | 0 | ready/visual-quality-review; revisión visual |
+| Vercel Web Design Guidelines | 5a37a6329fbad3666c3207392a6a7c0110e92efb | 0 | ready/web-design-guidelines; auditoría UI; MIT, cobertura completa con salvedades |
+| Thekorn Frontend Design | 92e22ef4214449e86af2241cfa2abd6cc0b76c92 | 0 | [Referencia original fijada](https://github.com/thekorn/agent-skills/blob/92e22ef4214449e86af2241cfa2abd6cc0b76c92/skills/frontend-design/SKILL.md); no redistribuida por falta de licencia clara |
+
+Vercel: la licencia MIT está declarada en el README del repositorio de skills; se conserva la licencia de las directrices originales y la atribución de origen. Los dos archivos analizados se copian sin cambios. No descargar actualizaciones ni ejecutar los comandos de mantenimiento sin repetir el proceso de aprobación.
+
+Para cada proyecto, usar Premium Web Design al crear o rediseñar, consultar Thekorn cuando sea útil para dirección artística, Visual Quality Review al revisar el resultado renderizado, Vercel al comprobar código de interfaz y Stop Slop al revisar textos. No aplicar reglas de estilo mecánicamente si perjudican accesibilidad, precisión o requisitos del cliente. Las tres alternativas restantes quedan en reserva, sin incorporar.
+
+Las guías son referencias disponibles en esta rama, no una instalación global o persistente en ChatGPT ni en el ordenador del usuario.
