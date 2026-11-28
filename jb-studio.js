@@ -43,7 +43,7 @@ render();
 
 if(location.hash==='#agenda'){history.replaceState(null,'','#contacto');document.getElementById('contacto').scrollIntoView();}
 
-/* JB Studio 1.6 — explicit scroll position trigger. */
+/* JB Studio 1.7 — measured scroll entrance. */
 (function setupScrollReveal(){
  const preference=window.matchMedia('(prefers-reduced-motion: reduce)');
  if(preference.matches)return;
@@ -56,8 +56,9 @@ if(location.hash==='#agenda'){history.replaceState(null,'','#contacto');document
    el.classList.remove('jb-reveal-pending');
    if(animate){
      const done=()=>{el.classList.remove('jb-reveal-shown');};
-     el.addEventListener('transitionend',done,{once:true});
-     window.setTimeout(done,1000);
+     const onEnd=event=>{if(event.target===el&&event.propertyName==='transform'){el.removeEventListener('transitionend',onEnd);done();}};
+     el.addEventListener('transitionend',onEnd);
+     window.setTimeout(()=>{el.removeEventListener('transitionend',onEnd);done();},1500);
    }
  }
  function failOpen(){
@@ -72,7 +73,7 @@ if(location.hash==='#agenda'){history.replaceState(null,'','#contacto');document
      pending.forEach(el=>{
        if(!el.isConnected||el.closest('[hidden]')){pending.delete(el);el.classList.remove('jb-reveal-pending');return;}
        const r=el.getBoundingClientRect();
-       if(r.top<=vh*.84||el.matches(':focus-within'))show(el,!el.matches(':focus-within')&&r.bottom>0);
+       if(r.top<=vh*.82||el.matches(':focus-within'))show(el,!el.matches(':focus-within')&&r.bottom>0);
      });
    }catch(e){failOpen();}
  }
