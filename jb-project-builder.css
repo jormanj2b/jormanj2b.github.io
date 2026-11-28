@@ -1,50 +1,67 @@
-
-/* JB / PROJECT BUILDER — uses studio palette and typography. */
-#configurar{border-block:1px solid var(--line);background:var(--bg)}
-.jb-pb-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:24px;align-items:start}
-.jb-pb-main{display:grid;gap:18px;min-width:0}
-.jb-pb-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px;min-width:0;margin:0}
-.jb-pb-kicker{display:block;font:700 11px ui-monospace,monospace;letter-spacing:.1em;color:var(--blue);margin-bottom:10px}
-.jb-pb-card legend{padding:0 8px}.jb-pb-card legend .jb-pb-kicker{margin:0}
-.jb-pb-card h3{font-size:22px;margin:0 0 6px}.jb-pb-card p,.jb-pb-scope{font-size:14px;color:var(--muted)}
-.jb-pb-card label:not(.jb-pb-choice){margin:12px 0 5px}
-.jb-pb-card select{width:100%}.jb-pb-scope ul{padding-left:20px;margin:12px 0 0}
-.jb-pb-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.jb-pb-choice{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:9px;padding:13px;cursor:pointer;min-height:88px}
-.jb-pb-choice:has(input:checked){border-color:var(--blue);background:var(--bg)}
-.jb-pb-choice input{width:18px;height:18px;margin:3px 0 0;flex:none;accent-color:var(--blue)}
-.jb-pb-choice small{display:block;font-weight:400;color:var(--muted);margin-top:3px;line-height:1.45}
-.jb-pb-tool{display:inline-block;font:600 11px ui-monospace,monospace;margin-top:8px;color:var(--blue)}
-.jb-pb-summary{position:sticky;top:20px;background:var(--dark);color:white;padding:25px;border-radius:var(--radius);min-width:0}
-.jb-pb-summary .jb-pb-kicker{color:var(--lime)}
-.jb-pb-summary h3{font:500 30px var(--display,Georgia);margin:0 0 16px}
-.jb-pb-summary p{font-size:13px;line-height:1.5;color:#d1ddd2;overflow-wrap:anywhere}
-#jb-pb-lines p{display:flex;justify-content:space-between;gap:10px}#jb-pb-lines b{white-space:nowrap;color:white}
-.jb-pb-total{display:grid;gap:6px;border-block:1px solid #53665b;padding:16px 0;margin:16px 0}
-.jb-pb-total span{color:#d1ddd2;font-size:12px}.jb-pb-total strong{font-size:clamp(26px,3.1vw,40px);letter-spacing:-.045em;color:var(--lime);line-height:1.2}
-.jb-pb-total b{font-size:18px}.jb-pb-summary button{width:100%}.jb-pb-summary button:disabled{opacity:.5;cursor:not-allowed}
-#jb-pb-status:empty,#jb-pb-custom-note:empty{display:none}
+/* JB Studio — an editorial proposal workspace, integrated with service plans. */
+#configurar{margin:52px 0 40px;scroll-margin-top:32px;padding:36px 0 0;border-top:1px solid var(--line)}
+#configurar>.eyebrow{color:var(--blue)}
+#configurar h2{max-width:20ch}
+.jb-proposal-workspace{display:grid;gap:28px}
+.jb-proposal-workspace h3{font-family:var(--display,Georgia);font-size:clamp(24px,3vw,34px);font-weight:600;line-height:1.14;letter-spacing:-.035em;margin:0 0 10px}
+.jb-proposal-workspace p{font-size:14px;line-height:1.6;color:var(--muted)}
+.jb-pb-kicker{font:700 11px/1.5 ui-monospace,monospace!important;letter-spacing:.11em;color:var(--blue)!important;margin:0 0 11px!important}
+.jb-proposal-brief{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--white)}
+.jb-proposal-controls,.jb-proposal-scope{padding:clamp(20px,3.2vw,40px);min-width:0}
+.jb-proposal-controls>p{margin:0 0 20px}
+.jb-proposal-controls label{margin:15px 0 5px}
+.jb-proposal-controls select{width:100%}
+.jb-proposal-context{margin:18px 0 0!important;border-left:2px solid var(--blue);padding-left:12px}
+.jb-proposal-scope{background:var(--dark);color:white}
+.jb-proposal-scope .jb-pb-kicker{color:var(--lime)!important}
+.jb-proposal-scope ul{list-style:none;padding:0;margin:20px 0;display:grid;gap:12px}
+.jb-proposal-scope li{position:relative;padding-left:23px;color:#e1e8df;font-size:14px;line-height:1.55}
+.jb-proposal-scope li:before{content:'✓';position:absolute;left:0;color:var(--lime);font-weight:800}
+.jb-proposal-scope .jb-proposal-scope-note{color:#c3d2c5;font-size:12px;margin:18px 0 0}
+.jb-included-chips{display:flex;flex-wrap:wrap;gap:7px}
+.jb-included-chips span{border:1px solid #6a806f;border-radius:4px;padding:5px 9px;color:var(--lime);font-size:12px;font-weight:650}
+.jb-proposal-options{padding:16px 0}
+.jb-proposal-options-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:15px}
+.jb-proposal-options-head p{margin:6px 0 0}
+#jb-pb-selected{font:700 12px ui-monospace,monospace;color:var(--blue);white-space:nowrap;padding-bottom:4px}
+.jb-extension-group{border-top:1px solid var(--line)}
+.jb-extension-group:last-child{border-bottom:1px solid var(--line)}
+.jb-extension-group>summary{display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;padding:17px 4px;list-style:none;font-weight:750;color:var(--ink)}
+.jb-extension-group>summary::-webkit-details-marker{display:none}
+.jb-extension-group>summary:after{content:'+';font:500 24px/1 Georgia,serif;color:var(--blue)}
+.jb-extension-group[open]>summary:after{content:'−'}
+.jb-extension-group>summary small{font-weight:500;color:var(--muted);margin-left:auto;font-size:12px}
+.jb-extension-group[open]>summary{color:var(--blue)}
+.jb-extension-group>div{padding:0 4px 12px}
+.jb-extension-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(100px,auto) 105px;gap:15px;align-items:center;padding:15px 0;border-top:1px solid var(--line)}
+.jb-extension-row strong{display:block;font-size:14px;color:var(--ink)}
+.jb-extension-row p{margin:4px 0 0;font-size:12px;max-width:65ch}
+.jb-extension-price{font:650 12px/1.5 ui-monospace,monospace;color:var(--blue);text-align:right}
+.jb-extension-add{min-height:44px;border:1px solid var(--line);border-radius:5px;background:var(--white);color:var(--ink);font-size:12px;font-weight:750;cursor:pointer;padding:8px}
+.jb-extension-add[aria-pressed=true]{background:var(--dark);color:var(--lime);border-color:var(--dark)}
+#jb-pb-filter-note{font-size:12px;color:var(--blue);margin:10px 0 0}
+.jb-proposal-ai,.jb-proposal-care{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:26px;border-top:1px solid var(--line);padding:25px 0}
+.jb-proposal-ai input[type=range]{width:100%;accent-color:var(--blue);padding:0;margin:14px 0;border:0;background:transparent}
+.jb-proposal-ai input[type=number]{width:100%}
+.jb-proposal-ai-estimate{background:var(--white);border:1px solid var(--line);padding:24px;border-radius:var(--radius)}
+.jb-proposal-ai-estimate>strong{display:block;font-family:var(--display,Georgia);font-size:34px;color:var(--blue);line-height:1.1}
+.jb-proposal-ai-estimate summary{font-weight:700;font-size:13px;cursor:pointer}
+.jb-proposal-ai-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.jb-proposal-care label{align-self:center}
+.jb-proposal-total{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);border:1px solid var(--line);border-radius:var(--radius);background:var(--white);overflow:hidden}
+.jb-proposal-breakdown,.jb-proposal-investment{padding:clamp(20px,3vw,36px);min-width:0}
+.jb-proposal-investment{border-left:1px solid var(--line);background:#eee7da}
+.jb-proposal-investment>span{font-size:12px;color:var(--muted);font-weight:700}
+#jb-pb-total{display:block;font:600 clamp(30px,4vw,46px)/1.15 var(--display,Georgia);letter-spacing:-.045em;color:var(--blue);margin:10px 0}
+.jb-breakdown-line{display:flex;justify-content:space-between;align-items:baseline;gap:15px;border-bottom:1px solid var(--line);padding:10px 0;font-size:13px}
+.jb-breakdown-line span{min-width:0;overflow-wrap:anywhere}
+.jb-breakdown-line b{white-space:nowrap}
+.jb-proposal-investment .btn{width:100%;margin-top:8px}
+.jb-proposal-investment .btn:disabled{opacity:.45;cursor:not-allowed}
+#jb-pb-custom-note,#jb-pb-ai-note,#jb-pb-monthly{font-size:12px}
+#jb-pb-status:empty,#jb-pb-custom-note:empty,#jb-pb-ai-note:empty,#jb-pb-monthly:empty,#jb-pb-filter-note:empty{display:none}
 .jb-pb-demo{display:block;background:none;border:0;color:var(--blue);font-weight:750;font-size:13px;text-align:left;padding:10px 0;min-height:44px}
-@media(max-width:960px){.jb-pb-layout{grid-template-columns:1fr}.jb-pb-summary{position:static}}
-@media(max-width:600px){.jb-pb-choices{grid-template-columns:1fr}.jb-pb-card,.jb-pb-summary{padding:17px}}
-
-/* Modular catalogue */
-.jb-pb-types{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0 20px}
-.jb-pb-card label.jb-pb-type{margin:0}.jb-pb-type{min-height:74px}
-.jb-pb-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0}
-.jb-pb-tabs button{background:var(--white);border:1px solid var(--line);border-radius:5px;padding:8px 11px;color:var(--ink);font-size:12px;font-weight:750;min-height:44px;text-align:left}
-.jb-pb-tabs button[aria-pressed=true]{background:var(--dark);color:var(--lime);border-color:var(--dark)}
-.jb-pb-tabs button span{font-family:ui-monospace,monospace}
-#jb-pb-selected{font-size:12px;margin-bottom:0}
-#jb-pb-copy{margin-top:8px}
-.jb-pb-ai-result{background:var(--bg);padding:12px;border-left:3px solid var(--blue);font-weight:700}
 #jb-quote-area{grid-column:1/-1;border:1px solid var(--line);border-radius:8px;padding:12px;background:var(--bg)}
 #jb-quote-area textarea{width:100%;min-height:132px;resize:vertical;font-size:13px}
 #jb-quote-clear{background:none;border:0;color:var(--blue);font-size:13px;font-weight:700;padding:10px 0;min-height:44px}
-#jb-pb-status{margin-bottom:0}
-@media(max-width:600px){.jb-pb-types{grid-template-columns:1fr}.jb-pb-tabs{gap:5px}.jb-pb-tabs button{flex:1 1 45%}}
-
-/* Contextual project guidance */
-.jb-pb-context{border-left:3px solid var(--blue);padding:10px 12px;background:var(--bg);border-radius:0 5px 5px 0;margin:12px 0 16px;font-size:13px!important}
-#jb-pb-filter-note{font-size:12px;color:var(--blue);margin:8px 0 0}#jb-pb-filter-note:empty{display:none}
-.jb-pb-tabs button[hidden],#jb-pb-monthly-label[hidden],#jb-pb-monthly[hidden]{display:none!important}
+@media(max-width:760px){#configurar{margin:36px 0;padding-top:25px}.jb-proposal-brief,.jb-proposal-ai,.jb-proposal-care,.jb-proposal-total{grid-template-columns:1fr}.jb-proposal-investment{border-left:0;border-top:1px solid var(--line)}.jb-proposal-options-head{align-items:flex-start;flex-direction:column;gap:8px}.jb-extension-row{grid-template-columns:minmax(0,1fr) auto;gap:8px}.jb-extension-row>div{grid-column:1/-1}.jb-extension-price{text-align:left}.jb-proposal-ai-fields{grid-template-columns:1fr}}
