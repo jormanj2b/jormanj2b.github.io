@@ -53,3 +53,38 @@ main .preview-fallback { color: var(--muted); }
 /* Production contact and language links */
 .lang a{display:inline-block;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:7px;padding:7px 10px;font-size:12px;font-weight:700}.lang a[aria-current="page"]{background:#202f2c;color:#fff;border-color:#202f2c}
 .captcha-row{margin:12px 0;display:grid;gap:8px}.captcha-row .btn{justify-self:start}.captcha-row small{display:block}.captcha-widget{min-height:0;max-width:100%;overflow-x:auto}.result[data-error="true"]{color:#873b27;background:#fff1e9;border-color:#873b27}.form [hidden], [hidden]{display:none!important}.legal-links{display:flex;flex-wrap:wrap;gap:12px;align-items:center}.legal-links a,.legal-links button{color:inherit;text-decoration:underline;text-underline-offset:3px}.legal-links button{border:0;background:transparent;padding:0;cursor:pointer;font:inherit}.form a{color:#873b27;text-decoration:underline}.project-preview img{max-width:100%;height:auto;display:block}.project-preview img[hidden]{display:none}
+
+/* JB Studio 1.5 — compact contact, accessible scroll reveals. */
+#contacto{padding-block:clamp(42px,5vw,64px)}
+#contacto .contact-grid{grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:clamp(28px,4vw,52px);align-items:start}
+#contacto .contact-copy{min-width:0}
+#contacto .contact-copy .intro{margin-bottom:14px}
+#contacto .contact-copy .micro{margin:0;color:var(--muted);font-size:14px;max-width:42ch}
+#contacto .contact-next{margin-top:26px;padding-top:20px;border-top:1px solid #c8c3b5}
+#contacto .contact-next h3{font-size:18px;margin:0 0 12px}
+#contacto .contact-next ol{padding:0;margin:0;list-style:none;display:grid;gap:10px}
+#contacto .contact-next li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:start;font-size:14px;color:var(--muted)}
+#contacto .contact-next li::before{content:'✓';font-weight:800;color:#465a45}
+#contacto .contact-next strong{display:block;color:var(--ink);font-weight:700}
+#contacto .form{padding:clamp(18px,2.5vw,28px);min-width:0}
+#contacto .fields{gap:12px 14px}
+#contacto .fields input,#contacto .fields select,#contacto .fields textarea{padding:9px 11px;min-height:42px}
+#contacto .fields textarea{min-height:80px}
+#contacto .captcha-row{display:grid;gap:6px;justify-items:start;margin:12px 0 8px}
+#contacto #captcha-widget{width:100%;max-width:100%;overflow:visible;min-height:0}
+#contacto #captcha-widget:empty,#contacto #captcha-status:empty{display:none}
+#contacto #captcha-status{margin:0}
+#contacto .form .form-privacy{margin:8px 0 12px;font-size:12px;line-height:1.5;color:var(--muted)}
+#contacto .form .form-privacy a{color:var(--terracotta);font-weight:650}
+#contacto .form button[type=submit]{min-height:44px}
+@media(max-width:960px){#contacto .contact-grid{grid-template-columns:minmax(0,1fr);gap:22px}#contacto .contact-next{margin-top:18px;padding-top:14px}}
+@media(max-width:600px){#contacto{padding-block:38px}#contacto .contact-next ol{gap:8px}#contacto .fields{grid-template-columns:minmax(0,1fr);gap:10px}#contacto .form button[type=submit]{width:100%}#contacto .contact-copy .micro{max-width:none}}
+/* Content remains visible if JavaScript or IntersectionObserver is unavailable. */
+@keyframes jb-reveal-in{from{opacity:.15;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:no-preference){
+  main .jb-enter{animation:jb-reveal-in .48s cubic-bezier(.22,.68,.35,1) both}
+  main .jb-enter:nth-child(3n+2){animation-delay:55ms}
+  main .jb-enter:nth-child(3n+3){animation-delay:110ms}
+  main .jb-enter:focus-within{animation:none}
+}
+@media(prefers-reduced-motion:reduce){main .jb-enter{animation:none!important;opacity:1;transform:none}}
