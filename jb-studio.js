@@ -17,6 +17,27 @@ function contactErrors(values,allowedServices,planCount){
  return errors;
 }
 const contactFields=Object.fromEntries(['name','business','email','service','plan','notes','privacy'].map(key=>[key,document.querySelector('#form [name="'+key+'"]')]));
+function cleanContactName(value){return String(value).replace(/[^\p{L}\p{M} '\u2019-]/gu,'');}
+function installContactNameFilter(field){
+ let composing=false;
+ const clean=()=>{
+  const value=field.value,next=cleanContactName(value);
+  if(value===next)return;
+  const start=field.selectionStart,end=field.selectionEnd,direction=field.selectionDirection;
+  field.value=next;
+  if(start!==null&&end!==null)field.setSelectionRange(cleanContactName(value.slice(0,start)).length,cleanContactName(value.slice(0,end)).length,direction||'none');
+ };
+ field.addEventListener('compositionstart',()=>{composing=true;});
+ field.addEventListener('compositionend',()=>{composing=false;clean();validateFields();});
+ field.addEventListener('beforeinput',e=>{
+  if(composing||e.isComposing||!e.cancelable||!e.inputType?.startsWith('insert')||typeof e.data!=='string'||!e.data)return;
+  if(!cleanContactName(e.data))e.preventDefault();
+ });
+ field.addEventListener('input',e=>{if(!composing&&!e.isComposing)clean();});
+ field.addEventListener('change',()=>{if(!composing)clean();});
+ field.addEventListener('blur',()=>{if(!composing)clean();});
+}
+installContactNameFilter(contactFields.name);
 const touchedContact=new Set();let attemptedContact=false;
 const contactText={
  name:['Introduce un nombre válido: letras, espacios, guiones o apóstrofos; sin números.','Enter a valid name: letters, spaces, hyphens or apostrophes; no numbers.'],
