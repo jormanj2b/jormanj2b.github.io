@@ -92,3 +92,9 @@ main .preview-fallback { color: var(--muted); }
   main .jb-reveal-pending,main .jb-reveal-shown{opacity:1!important;transform:none!important;transition:none!important}
 }
 @media print{main .jb-reveal-pending,main .jb-reveal-shown{opacity:1!important;transform:none!important;transition:none!important}}
+
+/* 1.9.3: home footer targets, keyboard focus and heading semantics */
+footer .legal-links{gap:8px 12px}
+footer .legal-links a,footer .legal-links button,footer a[data-t="back"]{display:inline-flex;align-items:center;min-height:44px;min-width:44px;box-sizing:border-box;padding:8px 4px;line-height:1.4}
+footer .legal-links a:focus-visible,footer .legal-links button:focus-visible,footer a[data-t="back"]:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:3px}
+.system h2.sys-title{letter-spacing:-.018em}
