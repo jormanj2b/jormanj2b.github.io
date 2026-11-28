@@ -1,112 +1,106 @@
-/* JB Studio modular configurator. */
+/* JB Studio / editorial proposal builder */
 (function builder(){
 'use strict';
 const root=document.getElementById('projectBuilder'),c=window.JBProjectCatalog;
 if(!root||!c||typeof data==='undefined')return;
 const en=document.documentElement.lang==='en',tr=(a,b)=>en?b:a,d=data[en?'en':'es'],q=s=>root.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,v=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[v]));
-const money=n=>'$'+Number(n).toLocaleString('en-US')+' USD';
-const name=m=>m[en?3:2], typeName=t=>t[en?2:1], byId=id=>c.modules.find(m=>m[0]===id);
+const money=n=>'$'+Number(n).toLocaleString('en-US')+' USD',name=m=>m[en?3:2],typeName=t=>t[en?2:1],byId=id=>c.modules.find(m=>m[0]===id);
 const prices={web:d.plans.web.map(x=>x[1]),automation:d.plans.automation.map(x=>x[1]),maintenance:d.maintenance.map(x=>x[1])};
-const state={type:'landing',web:0,modules:[],care:-1,category:'sales'};
-const opts=arr=>arr.map((x,i)=>'<option value="'+i+'">'+esc(x[0])+' · '+money(x[1])+'</option>').join('');
+const state={type:'corporate',web:0,auto:0,sector:-1,modules:[],care:-1};
+const type=()=>c.types.find(t=>t[0]===state.type),profile=()=>c.selectedProfile(state);
 const option=(val,label)=>'<option value="'+val+'">'+esc(label)+'</option>';
-root.innerHTML='<div class="jb-pb-layout"><div class="jb-pb-main">'+
-'<fieldset class="jb-pb-card"><legend><span class="jb-pb-kicker">01 / '+tr('TIPO DE PROYECTO','PROJECT TYPE')+'</span></legend><label for="jb-pb-preset">'+tr('Comienza con una propuesta por sector (opcional)','Start with an industry preset (optional)')+'</label><select id="jb-pb-preset">'+option('',tr('Personalizar desde cero','Start from scratch'))+c.presets.map((p,i)=>option(i,p[en?1:0])).join('')+'</select><div class="jb-pb-types">'+c.types.map(t=>'<label class="jb-pb-choice jb-pb-type"><input type="radio" name="jb-pb-type" value="'+t[0]+'"><span><strong>'+esc(typeName(t))+'</strong><small>'+(t[3]>=0?tr('Desde ','From ')+money(prices.web[t[3]]):t[5]?tr('Desde ','From ')+money(t[5]):t[4]?tr('Base por cotizar','Base to be quoted'):t[0]==='automation'?tr('Desde $200 por flujo sencillo','From $200 for a simple workflow'):tr('Sin nueva web','No new website'))+'</small></span></label>').join('')+'</div><div id="jb-pb-web-card"><label for="jb-pb-web">'+tr('Nivel del plan web','Web plan level')+'</label><select id="jb-pb-web">'+opts(d.plans.web)+'</select><div id="jb-pb-scope" class="jb-pb-scope"></div></div><p id="jb-pb-base-note"></p></fieldset>'+
-'<div class="jb-pb-card"><span class="jb-pb-kicker">02 / '+tr('MÓDULOS','MODULES')+'</span><h3>'+tr('Personaliza las funcionalidades.','Customize the functionality.')+'</h3><p>'+tr('Solo verás las funcionalidades relevantes para tu proyecto. Todos los extras son opcionales; los flujos sencillos se agrupan en los planes de automatización existentes.','Only features relevant to your project are shown. All extras are optional; simple workflows are grouped under the existing automation plans.')+'</p><p id="jb-pb-context" class="jb-pb-context"></p><div id="jb-pb-categories" role="group" aria-label="'+tr('Categorías de módulos','Module categories')+'" class="jb-pb-tabs">'+c.categories.map(cat=>'<button type="button" data-pb-category="'+cat[0]+'" aria-pressed="false">'+esc(cat[en?2:1])+' <span data-pb-count="'+cat[0]+'"></span></button>').join('')+'</div><div id="jb-pb-modules" class="jb-pb-choices"></div><p id="jb-pb-selected" role="status"></p><p id="jb-pb-filter-note" role="status"></p></div>'+
-'<div id="jb-pb-ai" class="jb-pb-card" hidden><span class="jb-pb-kicker">03 / AI USAGE</span><h3>'+tr('Estima el consumo mensual de IA.','Estimate monthly AI usage.')+'</h3><p>'+tr('El cálculo solo representa el consumo de tokens del modelo, no la implementación, hosting, mantenimiento ni integraciones. Introduce las tarifas reales de tu proveedor; no se consultan automáticamente.','This calculation covers model token usage only, not implementation, hosting, maintenance or integrations. Enter your provider’s actual rates; they are not fetched automatically.')+'</p><label for="jb-pb-volume">'+tr('Conversaciones al mes','Conversations per month')+'</label><select id="jb-pb-volume">'+option(100,tr('Bajo · 100','Low · 100'))+option(500,tr('Medio · 500','Medium · 500'))+option(2000,tr('Alto · 2.000','High · 2,000'))+option('custom',tr('Personalizado','Custom'))+'</select><label id="jb-pb-volume-custom-label" hidden>'+tr('Cantidad mensual','Monthly quantity')+'<input id="jb-pb-volume-custom" type="number" min="1" max="10000000" value="500"></label><div class="jb-pb-choices"><label>'+tr('Tokens de entrada por conversación','Input tokens per conversation')+'<input id="jb-pb-input-tokens" type="number" min="0" max="10000000" value="1000"></label><label>'+tr('Tokens de salida por conversación','Output tokens per conversation')+'<input id="jb-pb-output-tokens" type="number" min="0" max="10000000" value="300"></label><label>'+tr('USD por millón de tokens de entrada','USD per million input tokens')+'<input id="jb-pb-input-rate" type="number" min="0" step="any" placeholder="'+tr('Tarifa del proveedor','Provider rate')+'"></label><label>'+tr('USD por millón de tokens de salida','USD per million output tokens')+'<input id="jb-pb-output-rate" type="number" min="0" step="any" placeholder="'+tr('Tarifa del proveedor','Provider rate')+'"></label></div><p class="jb-pb-ai-result" id="jb-pb-ai-result" aria-live="polite"></p></div>'+
-'<div class="jb-pb-card" id="jb-pb-care-card"><span class="jb-pb-kicker">04 / '+tr('MANTENIMIENTO','MAINTENANCE')+'</span><label for="jb-pb-care">'+tr('Después del primer mes web incluido','After the included first website month')+'</label><select id="jb-pb-care">'+option(-1,tr('Sin mantenimiento adicional','No additional maintenance'))+d.maintenance.map((r,i)=>option(i,r[0]+' · '+money(r[1])+tr('/mes','/mo'))).join('')+'</select><p>'+tr('Opcional y sin permanencia. El mantenimiento de sistemas o IA se cotiza por separado.','Optional, no commitment. System or AI maintenance is quoted separately.')+'</p></div></div>'+
-'<aside class="jb-pb-summary" aria-labelledby="jb-pb-summary-title"><span class="jb-pb-kicker">JB / ESTIMATE</span><h3 id="jb-pb-summary-title">'+tr('Tu proyecto','Your project')+'</h3><div id="jb-pb-lines"></div><div class="jb-pb-total" aria-live="polite" aria-atomic="true"><span>'+tr('Subtotal estimado de implementación','Estimated implementation subtotal')+'</span><strong id="jb-pb-total"></strong><span id="jb-pb-monthly-label">'+tr('Mantenimiento web opcional','Optional website maintenance')+'</span><b id="jb-pb-monthly"></b></div><p id="jb-pb-custom-note"></p><p id="jb-pb-ai-note"></p><p>'+tr('Estimado sin compromiso. No incluye servicios de terceros, impuestos aplicables ni partidas pendientes. Las funcionalidades dependen del alcance y compatibilidad. Si algún módulo ya está cubierto por otro, ajustaremos el presupuesto antes de contratar.','Non-binding estimate. Excludes third-party services, applicable taxes and unquoted items. Features depend on scope and compatibility. Overlapping modules will be adjusted before contracting.')+'</p><button type="button" class="btn lime" id="jb-pb-request">'+tr('Preparar mi solicitud →','Prepare my inquiry →')+'</button><button type="button" class="btn darkghost" id="jb-pb-copy">'+tr('Copiar presupuesto','Copy estimate')+'</button><p id="jb-pb-status" role="status"></p></aside></div>';
-const web=q('#jb-pb-web'),care=q('#jb-pb-care'),preset=q('#jb-pb-preset'),type=()=>c.types.find(t=>t[0]===state.type);
+const planOptions=rows=>rows.map((r,i)=>option(i,r[0]+' · '+money(r[1]))).join('');
+const list=rows=>'<ul>'+rows.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul>';
+root.innerHTML='<div class="jb-proposal-workspace">'+
+ '<div class="jb-proposal-brief"><div class="jb-proposal-controls"><p class="jb-pb-kicker">JB / PROJECT BRIEF</p><h3>'+tr('Tu negocio, tu solución.','Your business, your solution.')+'</h3><p>'+tr('Partimos de lo que realmente necesitas y dejamos los extras para después.','Start with what you actually need; add extras only if useful.')+'</p>'+
+ '<label for="jb-pb-preset">'+tr('¿A qué se dedica tu negocio?','What does your business do?')+'</label><select id="jb-pb-preset">'+option(-1,tr('Otro / proyecto personalizado','Other / custom project'))+c.presets.map((p,i)=>option(i,p[en?1:0])).join('')+'</select>'+
+ '<label for="jb-pb-type">'+tr('¿Qué quieres construir?','What would you like to build?')+'</label><select id="jb-pb-type"></select>'+
+ '<div id="jb-pb-web-card"><label for="jb-pb-web">'+tr('Tu plan web','Your web plan')+'</label><select id="jb-pb-web">'+planOptions(d.plans.web)+'</select></div>'+
+ '<div id="jb-pb-auto-card" hidden><label for="jb-pb-auto">'+tr('Tu plan de automatización','Your automation plan')+'</label><select id="jb-pb-auto">'+planOptions(d.plans.automation)+'</select></div>'+
+ '<p id="jb-pb-context" class="jb-proposal-context"></p></div>'+
+ '<div class="jb-proposal-scope"><p class="jb-pb-kicker">'+tr('LO ESENCIAL, INCLUIDO','THE ESSENTIALS, INCLUDED')+'</p><h3 id="jb-pb-scope-title"></h3><div id="jb-pb-scope"></div><div id="jb-pb-included"></div><p class="jb-proposal-scope-note">'+tr('Incluido en el alcance indicado, no supone servicios de terceros ni funcionalidades ilimitadas.','Included within the stated scope; third-party services and unlimited functionality are not included.')+'</p></div></div>'+
+ '<div class="jb-proposal-options"><div class="jb-proposal-options-head"><div><p class="jb-pb-kicker">JB / EXTENSIONS</p><h3>'+tr('¿Quieres ir un paso más allá?','Want to go a step further?')+'</h3><p>'+tr('Solo mostramos extras compatibles que aún no están incluidos. Abre el grupo que te interesa.','Only compatible extras not already included are shown. Open the group that interests you.')+'</p></div><span id="jb-pb-selected" role="status"></span></div><div id="jb-pb-modules"></div><p id="jb-pb-filter-note" role="status"></p></div>'+
+ '<div id="jb-pb-ai" class="jb-proposal-ai" hidden><div><p class="jb-pb-kicker">JB / AI OPERATIONS</p><h3>'+tr('¿Cuántas conversaciones esperas?','How many conversations do you expect?')+'</h3><p>'+tr('La implementación es un pago único. El uso de IA se paga según consumo; alojamiento, mantenimiento y otros servicios se cotizan aparte.','Implementation is a one-time payment. AI usage is billed by consumption; hosting, maintenance and other services are quoted separately.')+'</p><label for="jb-pb-volume">'+tr('Conversaciones mensuales aproximadas','Approximate monthly conversations')+'</label><input type="number" id="jb-pb-volume" min="1" max="10000000" step="1" value="500"><input type="range" id="jb-pb-volume-slider" min="100" max="5000" step="100" value="500" aria-label="'+tr('Volumen mensual aproximado','Approximate monthly volume')+'"><p class="jb-proposal-context">'+tr('Ejemplo de cálculo, no tarifa de un proveedor ni límite garantizado.','Illustrative calculation, not a provider rate or guaranteed limit.')+'</p></div><div class="jb-proposal-ai-estimate"><p class="jb-pb-kicker">'+tr('CONSUMO ILUSTRATIVO','ILLUSTRATIVE USAGE')+'</p><strong id="jb-pb-ai-result" aria-live="polite"></strong><p>'+tr('Supuestos editables: 1.000 tokens de entrada y 300 de salida por conversación; tarifas de ejemplo de $0,50 y $2 por millón de tokens.','Editable assumptions: 1,000 input and 300 output tokens per conversation; example rates of $0.50 and $2 per million tokens.')+'</p><details><summary>'+tr('Ajustar supuestos técnicos','Adjust technical assumptions')+'</summary><div class="jb-proposal-ai-fields"><label>'+tr('Tokens de entrada','Input tokens')+'<input id="jb-pb-input-tokens" type="number" min="0" max="10000000" value="1000"></label><label>'+tr('Tokens de salida','Output tokens')+'<input id="jb-pb-output-tokens" type="number" min="0" max="10000000" value="300"></label><label>'+tr('USD / millón entrada','USD / million input')+'<input id="jb-pb-input-rate" type="number" min="0" step="any" value="0.50"></label><label>'+tr('USD / millón salida','USD / million output')+'<input id="jb-pb-output-rate" type="number" min="0" step="any" value="2"></label></div></details></div></div>'+
+ '<div id="jb-pb-care-card" class="jb-proposal-care"><div><p class="jb-pb-kicker">'+tr('DESPUÉS DE LA ENTREGA','AFTER DELIVERY')+'</p><h3>'+tr('Acompañamiento opcional.','Optional ongoing support.')+'</h3><p>'+tr('Primer mes de mantenimiento incluido en los planes web completos; después puedes continuar sin permanencia.','First month included in full website plans; continue afterwards without a commitment.')+'</p></div><label for="jb-pb-care">'+tr('Mantenimiento web','Website maintenance')+'<select id="jb-pb-care">'+option(-1,tr('Sin plan adicional','No additional plan'))+d.maintenance.map((r,i)=>option(i,r[0]+' · '+money(r[1])+tr('/mes','/mo'))).join('')+'</select></label></div>'+
+ '<div class="jb-proposal-total"><div class="jb-proposal-breakdown"><p class="jb-pb-kicker">JB / YOUR PROPOSAL</p><h3>'+tr('Lo que hemos acordado configurar.','What you have chosen to configure.')+'</h3><div id="jb-pb-lines"></div><p id="jb-pb-custom-note"></p><p id="jb-pb-ai-note"></p></div><div class="jb-proposal-investment"><span>'+tr('Estimado inicial de implementación','Starting implementation estimate')+'</span><strong id="jb-pb-total" aria-live="polite"></strong><p id="jb-pb-monthly"></p><p>'+tr('Sin compromiso. Alcance final por escrito; impuestos, licencias y costes externos aparte.','No obligation. Final scope agreed in writing; taxes, licenses and external costs separate.')+'</p><button type="button" class="btn" id="jb-pb-request">'+tr('Solicitar mi propuesta →','Request my proposal →')+'</button><button type="button" class="btn ghost" id="jb-pb-copy">'+tr('Copiar resumen','Copy summary')+'</button><p id="jb-pb-status" role="status"></p></div></div></div>';
+const typeSelect=q('#jb-pb-type'),web=q('#jb-pb-web'),auto=q('#jb-pb-auto'),care=q('#jb-pb-care'),preset=q('#jb-pb-preset');
 const isAI=()=>state.type==='chatbot'||state.modules.some(id=>byId(id)?.[1]==='ai');
-const applicable=()=>c.availableModules(state.type,c);
-const availableCats=()=>c.availableCategories(state.type,c);
-function normalizeSelection(){const allowed=new Set(applicable().map(m=>m[0]));const before=state.modules.length;state.modules=state.modules.filter(id=>allowed.has(id));const cats=availableCats();if(!cats.some(cat=>cat[0]===state.category))state.category=cats[0]?.[0]||'';return before-state.modules.length;}
-function renderModules(){
- const result=c.calculate(state,c,prices);
- q('#jb-pb-modules').innerHTML=applicable().filter(m=>m[1]===state.category).map(m=>{
-  const checked=state.modules.includes(m[0]),included=result.included.includes(m[0])||(state.web===2&&type()[3]>=0&&['dashboard','booking'].includes(m[0]))||(state.type==='chatbot'&&m[0]==='chatbot')||(state.type==='store'&&m[0]==='cart')||(type()[3]>=0&&m[0]==='domain');
-  const price=included?tr('Incluido según alcance','Included subject to scope'):m[6]==='flow'?tr('Plan de automatización','Automation plan'):m[6]==='custom'?tr('Por cotizar','To be quoted'):tr('Desde ','From ')+money(m[7])+(m[6]==='addon'?' · '+tr('orientativo','indicative'):'');
-  return '<label class="jb-pb-choice"><input type="checkbox" data-pb-module="'+m[0]+'" '+(checked?'checked':'')+'><span><strong>'+esc(name(m))+'</strong><small>'+esc(m[en?5:4])+'</small><span class="jb-pb-tool">'+esc(price)+'</span></span></label>';
- }).join('');
+const typesForSector=()=>state.sector<0?c.types:c.types.filter(t=>c.profiles[state.sector].types.includes(t[0]));
+function applicable(){const included=new Set(c.includedModules(state,c));return c.availableModules(state.type,c).filter(m=>!included.has(m[0]));}
+function normalize(){const allowed=new Set(applicable().map(m=>m[0])),n=state.modules.length;state.modules=state.modules.filter(id=>allowed.has(id));return n-state.modules.length;}
+function modulePrice(m){return m[6]==='flow'?tr('Según plan de flujos','Workflow plan'):m[6]==='custom'?tr('Por cotizar','To be quoted'):tr('Desde ','From ')+money(m[7]);}
+function renderExtras(){
+ const open=new Set(Array.from(root.querySelectorAll('#jb-pb-modules details[open]')).map(el=>el.dataset.category));
+ const rows=applicable(),cats=c.availableCategories(state.type,c).filter(cat=>rows.some(m=>m[1]===cat[0]));
+ q('#jb-pb-modules').innerHTML=cats.map(cat=>{
+ const items=rows.filter(m=>m[1]===cat[0]),n=items.filter(m=>state.modules.includes(m[0])).length;
+ return '<details class="jb-extension-group" data-category="'+cat[0]+'" '+(open.has(cat[0])?'open':'')+'><summary><span>'+esc(cat[en?2:1])+'</span><small>'+n+'/'+items.length+' '+tr('seleccionados','selected')+'</small></summary><div>'+items.map(m=>{const active=state.modules.includes(m[0]);return '<div class="jb-extension-row"><div><strong>'+esc(name(m))+'</strong><p>'+esc(m[en?5:4])+'</p></div><span class="jb-extension-price">'+esc(modulePrice(m))+'</span><button type="button" class="jb-extension-add" data-pb-module="'+m[0]+'" aria-pressed="'+active+'" aria-label="'+esc((active?tr('Quitar ','Remove '):tr('Añadir ','Add '))+name(m))+'">'+(active?tr('✓ Añadido','✓ Added'):tr('+ Añadir','+ Add'))+'</button></div>';}).join('')+'</div></details>';
+ }).join('')||'<p>'+tr('El alcance básico ya cubre esta solución.','The basic scope already covers this solution.')+'</p>';
 }
 function aiCost(){
- const ai=q('#jb-pb-ai');ai.hidden=!isAI();
- if(ai.hidden)return null;
- const volume=q('#jb-pb-volume').value,custom=q('#jb-pb-volume-custom');q('#jb-pb-volume-custom-label').hidden=volume!=='custom';
- const fields=[volume==='custom'?custom:null,q('#jb-pb-input-tokens'),q('#jb-pb-output-tokens'),q('#jb-pb-input-rate'),q('#jb-pb-output-rate')].filter(Boolean);
- if(fields.some(el=>el.value===''||!el.checkValidity())){q('#jb-pb-ai-result').textContent=tr('Introduce valores válidos y ambas tarifas para calcular el consumo.','Enter valid values and both rates to calculate usage.');return null;}
- const n=Number(volume==='custom'?custom.value:volume),a=Number(q('#jb-pb-input-tokens').value),b=Number(q('#jb-pb-output-tokens').value),ir=Number(q('#jb-pb-input-rate').value),or=Number(q('#jb-pb-output-rate').value);
- const cost=n*(a*ir+b*or)/1000000;
+ const ai=q('#jb-pb-ai');ai.hidden=!isAI();if(ai.hidden)return null;
+ const fields=['volume','input-tokens','output-tokens','input-rate','output-rate'].map(id=>q('#jb-pb-'+id));
+ if(fields.some(el=>el.value===''||!el.checkValidity())){q('#jb-pb-ai-result').textContent=tr('Por calcular','To calculate');return null;}
+ const [n,a,b,ir,or]=fields.map(el=>Number(el.value)),cost=n*(a*ir+b*or)/1000000;
  if(!Number.isFinite(cost))return null;
- const display='$'+cost.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:4})+' USD'+tr('/mes','/mo');
- q('#jb-pb-ai-result').textContent=tr('Consumo orientativo: ','Illustrative usage: ')+display;
- return display;
+ const result='$'+cost.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:4})+' USD'+tr('/mes','/mo');
+ q('#jb-pb-ai-result').textContent=result;return result;
 }
-const pendingName=id=>id.startsWith('base:')?typeName(c.types.find(t=>t[0]===id.slice(5))):name(byId(id));
 let last;
 function refresh(redraw=false){
- normalizeSelection();
- const t=type(),r=c.calculate(state,c,prices),wp=d.plans.web[r.webIndex],ap=d.plans.automation[r.tier];
- root.querySelectorAll('[name=jb-pb-type]').forEach(el=>el.checked=el.value===state.type);
- q('#jb-pb-web-card').hidden=t[3]<0;q('#jb-pb-care-card').hidden=t[3]<0;web.value=String(state.web);care.value=String(state.care);
- q('#jb-pb-scope').innerHTML=wp?'<ul>'+wp[2].map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul>':'';
- q('#jb-pb-base-note').textContent=t[5]?t[en?7:6]:t[4]?tr('La implementación base necesita una propuesta a medida; el subtotal no incluye esa partida.','Base implementation requires a custom proposal; the subtotal excludes it.'):t[3]<0?tr('Puedes contratar módulos sin una nueva página web.','You can purchase modules without a new website.'):'';
- const context=c.hints[state.type];q('#jb-pb-context').textContent=context[en?1:0];
- const tabs=q('#jb-pb-categories'),cats=availableCats();
- for(const cat of c.categories){const button=q('[data-pb-category="'+cat[0]+'"]');button.hidden=!cats.some(x=>x[0]===cat[0]);button.setAttribute('aria-pressed',String(state.category===cat[0]));const n=state.modules.filter(id=>byId(id)[1]===cat[0]).length;q('[data-pb-count="'+cat[0]+'"]').textContent=n?'('+n+')':'';}
- for(const cat of cats)tabs.append(q('[data-pb-category="'+cat[0]+'"]'));
- if(redraw)renderModules();
- q('#jb-pb-selected').textContent=state.modules.length+' '+tr('extras opcionales seleccionados para este proyecto.','optional extras selected for this project.');
- const line=(a,b)=>'<p>'+esc(a)+'<b>'+esc(b)+'</b></p>';
- q('#jb-pb-lines').innerHTML=(wp?line(tr('Web','Website')+' · '+wp[0],money(r.base)):r.base?line(typeName(t),money(r.base)):'')+(ap?line(tr('Automatización','Automation')+' · '+ap[0]+' ('+r.flow.length+')',money(r.automation)):'')+r.lines.map(l=>line(name(byId(l.id)),money(l.price))).join('')+r.included.map(id=>line(name(byId(id)),tr('Incluido*','Included*'))).join('');
+ normalize();const t=type(),p=profile(),r=c.calculate(state,c,prices),wp=d.plans.web[r.webIndex],ap=d.plans.automation[r.tier];
+ preset.value=String(state.sector);typeSelect.innerHTML=typesForSector().map(t=>option(t[0],typeName(t))).join('');typeSelect.value=state.type;
+ web.value=String(state.web);auto.value=String(state.type==='automation'?r.tier:state.auto);care.value=String(state.care);
+ q('#jb-pb-web-card').hidden=t[3]<0;q('#jb-pb-auto-card').hidden=t[0]!=='automation';q('#jb-pb-care-card').hidden=t[3]<0;
+ q('#jb-pb-context').textContent=c.hints[state.type][en?1:0];
+ q('#jb-pb-scope-title').textContent=p?c.presets[state.sector][en?1:0]+' · '+(wp?wp[0]:typeName(t)):wp?wp[0]:t[0]==='automation'?ap[0]:typeName(t);
+ const scope=wp?wp[2]:t[0]==='automation'?ap[2]:t[5]?[t[en?7:6]]:[tr('Revisión de compatibilidad del sitio existente.','Existing website compatibility review.')];
+ q('#jb-pb-scope').innerHTML=list([...scope,...(p?p[en?'en':'es']:[])]);
+ q('#jb-pb-included').innerHTML=r.included.length?'<div class="jb-included-chips">'+r.included.map(id=>'<span>✓ '+esc(name(byId(id)))+'</span>').join('')+'</div>':'';
+ if(redraw)renderExtras();
+ q('#jb-pb-selected').textContent=state.modules.length+' '+tr('extras elegidos','extras selected');
+ const line=(a,b)=>'<div class="jb-breakdown-line"><span>'+esc(a)+'</span><b>'+esc(b)+'</b></div>';
+ q('#jb-pb-lines').innerHTML=(wp?line(typeName(t)+' · '+wp[0],money(r.base)):r.base?line(typeName(t),money(r.base)):'')+(ap?line(tr('Automatización','Automation')+' · '+ap[0],money(r.automation)):'')+r.lines.map(l=>line(name(byId(l.id)),money(l.price))).join('')+(r.included.length?line(tr('Funcionalidades incluidas','Included features'),tr('Sin coste adicional','No extra cost')):'');
  q('#jb-pb-total').textContent=r.total?tr('Desde ','From ')+money(r.total):tr('Por cotizar','To be quoted');
- q('#jb-pb-monthly-label').hidden=q('#jb-pb-monthly').hidden=t[3]<0;
- q('#jb-pb-monthly').textContent=money(r.recurring)+tr('/mes','/mo');
- q('#jb-pb-custom-note').textContent=r.pending.length?tr('No incluido · por cotizar: ','Excluded · to be quoted: ')+r.pending.map(pendingName).join(', '):'';
- const ai=aiCost();q('#jb-pb-ai-note').textContent=isAI()?tr('IA: consumo variable, aparte. ','AI: variable usage, separate. ')+(ai||''):'';
- const enabled=r.total>0||r.pending.length>0;
- q('#jb-pb-request').disabled=q('#jb-pb-copy').disabled=!enabled;
+ q('#jb-pb-monthly').textContent=t[3]>=0&&r.recurring?tr('Después del mes incluido: ','After the included month: ')+money(r.recurring)+tr('/mes','/mo'):'';
+ q('#jb-pb-custom-note').textContent=r.pending.length?tr('Pendiente de cotizar: ','To be quoted: ')+r.pending.map(id=>id.startsWith('base:')?typeName(t):name(byId(id))).join(', '):'';
+ const ai=aiCost();q('#jb-pb-ai-note').textContent=isAI()?tr('IA: consumo separado y variable. ','AI: separate, variable usage. ')+(ai?tr('Ejemplo: ','Example: ')+ai:''):'';
+ q('#jb-pb-request').disabled=q('#jb-pb-copy').disabled=!(r.total>0||r.pending.length>0);
  last={r,wp,ap,ai};
 }
-function applyPreset(i){
- const p=c.presets[i];if(!p)return;
- state.type=p[2];state.web=Math.max(0,type()[3]);state.modules=p[3].slice();state.care=-1;state.category=availableCats()[0]?.[0]||'';preset.value=String(i);q('#jb-pb-filter-note').textContent='';refresh(true);
-}
+function clearOpen(){q('#jb-pb-modules').querySelectorAll('details').forEach(el=>el.open=false);}
+function setType(id){state.type=id;state.web=Math.max(0,type()[3]);state.auto=0;state.care=-1;clearOpen();const removed=normalize();q('#jb-pb-filter-note').textContent=removed?tr('Ajustamos los extras al nuevo alcance.','Extras adjusted to the new scope.'):'';refresh(true);}
+function applyPreset(i){const p=c.presets[i];if(!p)return;state.sector=i;state.modules=[];state.type=c.profiles[i].preferred;state.web=0;state.auto=0;state.care=-1;clearOpen();q('#jb-pb-filter-note').textContent='';refresh(true);}
 root.addEventListener('change',e=>{
  const el=e.target;
- if(el===preset){if(el.value!=='')applyPreset(Number(el.value));else{Object.assign(state,{type:'landing',web:0,modules:[],care:-1,category:'sales'});q('#jb-pb-filter-note').textContent='';refresh(true);}return;}
- if(el.name==='jb-pb-type'){state.type=el.value;state.web=Math.max(0,type()[3]);state.care=-1;state.category=availableCats()[0]?.[0]||'';preset.value='';const removed=normalizeSelection();q('#jb-pb-filter-note').textContent=removed?tr('Se retiraron '+removed+' extras que no corresponden al nuevo tipo de proyecto.','Removed '+removed+' extras that do not match the new project type.'):'';refresh(true);return;}
- if(el===web){state.web=Number(web.value);refresh(true);return;}
- if(el===care)state.care=Number(care.value);
- if(el.dataset.pbModule){const id=el.dataset.pbModule;if(!applicable().some(m=>m[0]===id))return;q('#jb-pb-filter-note').textContent='';state.modules=el.checked?[...new Set([...state.modules,id])]:state.modules.filter(x=>x!==id);preset.value='';}
- refresh();
+ if(el===preset){const i=Number(el.value);if(i>=0)applyPreset(i);else{state.sector=-1;state.modules=[];setType('corporate');}return;}
+ if(el===typeSelect){if(typesForSector().some(t=>t[0]===el.value))setType(el.value);return;}
+ if(el===web){state.web=Number(web.value);const n=normalize();q('#jb-pb-filter-note').textContent=n?tr('El nuevo plan ya incluye '+n+' de tus extras; retiramos ese coste.','The new plan includes '+n+' of your extras; we removed those charges.'):'';refresh(true);return;}
+ if(el===auto){state.auto=Number(auto.value);refresh(true);return;}
+ if(el===care){state.care=Number(care.value);refresh();return;}
 });
-root.addEventListener('input',e=>{if(e.target.closest('#jb-pb-ai'))refresh();});
-q('#jb-pb-categories').addEventListener('click',e=>{const b=e.target.closest('[data-pb-category]');if(!b||b.hidden||!availableCats().some(cat=>cat[0]===b.dataset.pbCategory))return;state.category=b.dataset.pbCategory;refresh(true);b.focus({preventScroll:true});});
+root.addEventListener('click',e=>{const b=e.target.closest('[data-pb-module]');if(!b)return;const id=b.dataset.pbModule;if(!applicable().some(m=>m[0]===id))return;state.modules=state.modules.includes(id)?state.modules.filter(x=>x!==id):[...state.modules,id];q('#jb-pb-filter-note').textContent='';refresh(true);q('[data-pb-module="'+id+'"]')?.focus({preventScroll:true});});
+root.addEventListener('input',e=>{if(!e.target.closest('#jb-pb-ai'))return;if(e.target.id==='jb-pb-volume-slider')q('#jb-pb-volume').value=e.target.value;if(e.target.id==='jb-pb-volume')q('#jb-pb-volume-slider').value=e.target.value;aiCost();const cost=aiCost();if(last)last.ai=cost;q('#jb-pb-ai-note').textContent=tr('IA: consumo separado y variable. ','AI: separate, variable usage. ')+(cost?tr('Ejemplo: ','Example: ')+cost:'');});
 function summary(){
- const {r,wp,ap,ai}=last;
- return ['JB / PROJECT BUILDER',tr('Proyecto: ','Project: ')+typeName(type()),wp?tr('Web: ','Website: ')+wp[0]+' · '+money(r.base):r.base?typeName(type())+' · '+money(r.base):'',ap?tr('Automatización: ','Automation: ')+ap[0]+' · '+money(r.automation)+' ('+r.flow.map(id=>name(byId(id))).join(', ')+')':'',...r.lines.map(l=>name(byId(l.id))+' · '+money(l.price)),r.included.length?tr('Incluido según alcance: ','Included subject to scope: ')+r.included.map(id=>name(byId(id))).join(', '):'',r.pending.length?tr('Pendiente de cotizar: ','To be quoted: ')+r.pending.map(pendingName).join(', '):'',tr('Subtotal de implementación: ','Implementation subtotal: ')+(r.total?money(r.total):tr('Por cotizar','To be quoted')),type()[3]>=0?tr('Mantenimiento web: ','Website maintenance: ')+money(r.recurring)+tr('/mes','/mo'):'',isAI()?tr('Consumo IA aparte: ','Separate AI usage: ')+(ai||tr('Variable','Variable')):'',tr('Estimado orientativo, no contractual.','Indicative, non-binding estimate.')].filter(Boolean).join('\n');
+ const {r,wp,ap,ai}=last,p=profile();
+ return ['JB / PROJECT PROPOSAL',tr('Proyecto: ','Project: ')+typeName(type()),p?tr('Sector: ','Industry: ')+c.presets[state.sector][en?1:0]:'',wp?tr('Plan web: ','Web plan: ')+wp[0]+' · '+money(r.base):r.base?typeName(type())+' · '+money(r.base):'',p?tr('Alcance sectorial: ','Industry scope: ')+p[en?'en':'es'].join('; '):'',ap?tr('Automatización: ','Automation: ')+ap[0]+' · '+money(r.automation)+(r.flow.length?' ('+r.flow.map(id=>name(byId(id))).join(', ')+')':''):'',...r.lines.map(l=>name(byId(l.id))+' · '+money(l.price)),r.included.length?tr('Incluido: ','Included: ')+r.included.map(id=>name(byId(id))).join(', '):'',r.pending.length?tr('Por cotizar: ','To be quoted: ')+r.pending.map(id=>id.startsWith('base:')?typeName(type()):name(byId(id))).join(', '):'',tr('Implementación estimada: ','Estimated implementation: ')+(r.total?money(r.total):tr('Por cotizar','To be quoted')),r.recurring?tr('Mantenimiento: ','Maintenance: ')+money(r.recurring)+tr('/mes','/mo'):'',isAI()?tr('IA: consumo separado, ilustrativo: ','AI: separate illustrative usage: ')+(ai||tr('Variable','Variable')):'',tr('Propuesta no contractual; alcance confirmado por escrito.','Non-binding proposal; scope confirmed in writing.')].filter(Boolean).join('\n');
 }
 q('#jb-pb-request').addEventListener('click',()=>{
  const service=document.getElementById('select'),plan=document.getElementById('planSelect'),estimate=document.getElementById('jb-quote-summary'),area=document.getElementById('jb-quote-area'),notes=document.querySelector('#form [name=notes]');
  if(!service||!plan||!estimate||!area||!notes)return;
  const {r,wp,ap}=last;service.value=wp||['landing','catalog','store','system'].includes(state.type)?'web':state.modules.length===1&&state.modules[0]==='seo'?'audit':state.modules.length===1&&state.modules[0]==='research'?'lead':'automation';
  service.dispatchEvent(new Event('change',{bubbles:true}));plan.value=wp?String(r.webIndex):service.value==='automation'&&ap?String(r.tier):['audit','lead'].includes(service.value)?'0':'';
- estimate.value=summary();area.hidden=false;
- q('#jb-pb-status').textContent=tr('Presupuesto añadido al formulario; revisa y envía cuando quieras.','Estimate attached to the form; review and send when ready.');
- document.getElementById('contacto').scrollIntoView();notes.focus({preventScroll:true});
+ estimate.value=summary();area.hidden=false;q('#jb-pb-status').textContent=tr('Propuesta adjunta. Revisa antes de enviar.','Proposal attached. Review before sending.');document.getElementById('contacto').scrollIntoView();notes.focus({preventScroll:true});
 });
-q('#jb-pb-copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(summary());q('#jb-pb-status').textContent=tr('Presupuesto copiado.','Estimate copied.');}catch(e){q('#jb-pb-status').textContent=tr('No se pudo copiar. Puedes adjuntarlo a la solicitud.','Copy unavailable. You can attach it to the inquiry.');}});
+q('#jb-pb-copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(summary());q('#jb-pb-status').textContent=tr('Resumen copiado.','Summary copied.');}catch(e){q('#jb-pb-status').textContent=tr('No se pudo copiar. Puedes adjuntarlo a la solicitud.','Copy unavailable. Attach it to your inquiry instead.');}});
 const form=document.getElementById('form'),estimate=document.getElementById('jb-quote-summary'),area=document.getElementById('jb-quote-area');
 if(form&&estimate&&area){const clear=()=>{estimate.value='';area.hidden=true;};form.addEventListener('reset',clear);document.getElementById('jb-quote-clear')?.addEventListener('click',clear);form.addEventListener('change',e=>{if(['select','planSelect'].includes(e.target.id))clear();});}
-function decorateProjects(){
- for(const card of document.querySelectorAll('#projects .project')){
- const anchor=card.querySelector('a[href]'),info=card.querySelector('.project-info');if(!anchor||!info||info.querySelector('.jb-pb-demo'))continue;
- const idx=['laborathorno-demo','demo-barberia','demo-cafe','demo-tienda','demo-asesoria','demo-gimnasio'].findIndex(p=>new URL(anchor.href,location.href).pathname.split('/').includes(p));
- if(idx<0)continue;const b=document.createElement('button');b.type='button';b.className='jb-pb-demo';b.textContent=tr('Configurar algo similar →','Build something similar →');b.addEventListener('click',()=>{applyPreset(idx);document.getElementById('configurar').scrollIntoView();preset.focus({preventScroll:true});});info.append(b);
- }
-}
-refresh(true);decorateProjects();
-if('MutationObserver' in window){const el=document.getElementById('projects');if(el)new MutationObserver(decorateProjects).observe(el,{childList:true});}
+function openBrief(){document.getElementById('configurar').scrollIntoView();preset.focus({preventScroll:true});}
+window.JBOpenPlan=function(service,index){if(!['web','automation'].includes(service)||!Number.isInteger(index)||index<0||index>2)return false;
+ if(service==='automation'){state.sector=-1;state.type='automation';state.auto=index;state.care=-1;}else{if(state.sector>=0&&!c.profiles[state.sector].types.includes('corporate'))state.sector=-1;state.type='corporate';state.web=index;state.care=-1;}
+ normalize();clearOpen();q('#jb-pb-filter-note').textContent='';refresh(true);openBrief();return true;
+};
+function decorateProjects(){for(const card of document.querySelectorAll('#projects .project')){const anchor=card.querySelector('a[href]'),info=card.querySelector('.project-info');if(!anchor||!info||info.querySelector('.jb-pb-demo'))continue;const idx=['laborathorno-demo','demo-barberia','demo-cafe','demo-tienda','demo-asesoria','demo-gimnasio'].findIndex(p=>new URL(anchor.href,location.href).pathname.split('/').includes(p));if(idx<0)continue;const b=document.createElement('button');b.type='button';b.className='jb-pb-demo';b.textContent=tr('Personalizar esta solución →','Customize this solution →');b.addEventListener('click',()=>{applyPreset(idx);openBrief();});info.append(b);}}
+refresh(true);decorateProjects();if('MutationObserver' in window){const el=document.getElementById('projects');if(el)new MutationObserver(decorateProjects).observe(el,{childList:true});}
 })();
