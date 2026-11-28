@@ -159,10 +159,10 @@
     [
       "whatsapp-link",
       "sales",
-      "Pedidos por WhatsApp",
-      "WhatsApp orders",
-      "Envía un resumen de pedido a un número del negocio.",
-      "Send an order summary to the business number.",
+      "Botón de WhatsApp",
+      "WhatsApp contact button",
+      "Enlace directo al número comercial; no incluye automatización ni API.",
+      "Direct link to the business number; excludes automation and API.",
       "addon",
       45
     ],
@@ -201,8 +201,8 @@
       "admin",
       "Importación de Excel / CSV",
       "Excel / CSV import",
-      "Un formato de archivo y validación de registros.",
-      "One file format and record validation.",
+      "Carga desde una plantilla de Excel/CSV con validación básica; no incluye sincronización continua.",
+      "Import from one Excel/CSV template with basic validation; excludes continuous sync.",
       "addon",
       75
     ],
@@ -461,65 +461,154 @@
     [
       "Panadería",
       "Bakery",
-      "catalog",
-      [
-        "orders",
-        "whatsapp-link",
-        "inventory"
-      ]
+      "corporate",
+      []
     ],
     [
       "Barbería",
       "Barbershop",
       "corporate",
-      [
-        "booking",
-        "crm",
-        "reminders"
-      ]
+      []
     ],
     [
       "Cafetería",
       "Coffee shop",
-      "catalog",
-      [
-        "orders",
-        "dashboard",
-        "inventory"
-      ]
+      "corporate",
+      []
     ],
     [
       "Tienda",
       "Shop",
       "store",
-      [
-        "inventory",
-        "orders",
-        "stripe"
-      ]
+      []
     ],
     [
       "Servicios profesionales",
       "Professional services",
       "corporate",
-      [
-        "crm",
-        "booking",
-        "email"
-      ]
+      []
     ],
     [
       "Gimnasio",
       "Gym",
       "corporate",
-      [
-        "crm",
-        "booking",
-        "reminders"
-      ]
+      []
     ]
   ]
 };
+const profiles=[
+  {
+    "types": [
+      "corporate",
+      "catalog"
+    ],
+    "preferred": "corporate",
+    "includes": [
+      "whatsapp-link",
+      "excel"
+    ],
+    "es": [
+      "Catálogo inicial de hasta 15 productos con contenido suministrado",
+      "Contacto y consulta de pedidos por WhatsApp"
+    ],
+    "en": [
+      "Starter catalog of up to 15 supplied products",
+      "WhatsApp contact and order inquiries"
+    ]
+  },
+  {
+    "types": [
+      "corporate"
+    ],
+    "preferred": "corporate",
+    "includes": [
+      "whatsapp-link"
+    ],
+    "es": [
+      "Servicios, horarios y ubicación",
+      "Contacto directo y solicitud de cita por WhatsApp; agenda automática opcional"
+    ],
+    "en": [
+      "Services, hours and location",
+      "Direct contact and appointment inquiries via WhatsApp; automated booking optional"
+    ]
+  },
+  {
+    "types": [
+      "corporate",
+      "catalog"
+    ],
+    "preferred": "corporate",
+    "includes": [
+      "whatsapp-link",
+      "excel"
+    ],
+    "es": [
+      "Carta digital inicial de hasta 15 productos, con precios suministrados",
+      "Enlace directo a WhatsApp para consultas o pedidos",
+      "Carga inicial desde una plantilla Excel/CSV; edición autónoma y sincronización aparte"
+    ],
+    "en": [
+      "Starter digital menu of up to 15 supplied items and prices",
+      "Direct WhatsApp link for inquiries or orders",
+      "Initial import from one Excel/CSV template; self-service editing and synchronization separate"
+    ]
+  },
+  {
+    "types": [
+      "store",
+      "catalog",
+      "corporate"
+    ],
+    "preferred": "store",
+    "includes": [
+      "whatsapp-link",
+      "excel"
+    ],
+    "es": [
+      "Carga inicial de hasta 15 productos desde una plantilla",
+      "Contacto por WhatsApp; checkout y pagos según tipo de proyecto"
+    ],
+    "en": [
+      "Initial upload of up to 15 products from one template",
+      "WhatsApp contact; checkout and payments depend on project type"
+    ]
+  },
+  {
+    "types": [
+      "corporate"
+    ],
+    "preferred": "corporate",
+    "includes": [
+      "whatsapp-link"
+    ],
+    "es": [
+      "Presentación de servicios y formulario de contacto",
+      "Enlace de atención directa por WhatsApp"
+    ],
+    "en": [
+      "Service presentation and contact form",
+      "Direct WhatsApp contact link"
+    ]
+  },
+  {
+    "types": [
+      "corporate"
+    ],
+    "preferred": "corporate",
+    "includes": [
+      "whatsapp-link"
+    ],
+    "es": [
+      "Presentación de planes, horarios y servicios",
+      "Consultas de inscripción por WhatsApp; gestión de miembros opcional"
+    ],
+    "en": [
+      "Membership plans, hours and services presentation",
+      "Membership inquiries via WhatsApp; member management optional"
+    ]
+  }
+];
 
 const rules={
   "landing": {
@@ -795,25 +884,43 @@ const hints={
 };
 function availableModules(type,catalog){const rule=rules[type];if(!rule)return [];return catalog.modules.filter(m=>rule.modules===null||rule.modules.includes(m[0]));}
 function availableCategories(type,catalog){const ids=new Set(availableModules(type,catalog).map(m=>m[1]));return (rules[type]?.categories||[]).map(id=>catalog.categories.find(cat=>cat[0]===id)).filter(cat=>cat&&ids.has(cat[0]));}
+
+function selectedProfile(config){
+ const i=config.sector;if(!Number.isInteger(i)||i<0||i>=profiles.length)return null;
+ return profiles[i].types.includes(config.type)?profiles[i]:null;
+}
+function includedModules(config,catalog){
+ const ids=new Set(),type=catalog.types.find(t=>t[0]===config.type);
+ if(!type)return [];
+ if(["landing","corporate","catalog","store"].includes(type[0]))ids.add("whatsapp-link");
+ if(type[0]==="store")ids.add("cart");
+ if(type[0]==="chatbot")ids.add("chatbot");
+ if(type[3]>=0)ids.add("domain");
+ if(type[3]>=0&&config.web===2){ids.add("dashboard");ids.add("booking");}
+ const profile=selectedProfile(config);if(profile)for(const id of profile.includes)ids.add(id);
+ return [...ids];
+}
+
 function calculate(config,catalog,prices){
  const type=catalog.types.find(t=>t[0]===config.type);
  if(!type)throw Error("Invalid type");
  const webIndex=type[3]>=0?config.web:-1;
  const base=webIndex>=0?prices.web[webIndex]:(type[5]||0);
  const allowed=new Set(availableModules(type[0],catalog).map(m=>m[0]));
- const selected=new Set(config.modules.filter(id=>allowed.has(id))),lines=[],pending=[],included=[],flow=[];
+ const selected=new Set(config.modules.filter(id=>allowed.has(id))),lines=[],pending=[],included=includedModules(config,catalog),flow=[];
  if(type[4])pending.push("base:"+type[0]);
  for(const m of catalog.modules){
   if(!selected.has(m[0]))continue;
   const [id,,,,,,mode,price]=m;
-  if((type[0]==="chatbot"&&id==="chatbot")||(type[0]==="store"&&id==="cart")||(webIndex>=0&&id==="domain")||(webIndex===2&&["dashboard","booking"].includes(id))){included.push(id);continue;}
+  if(included.includes(id))continue;
   if(mode==="flow")flow.push(id);
   else if(mode==="custom")pending.push(id);
   else lines.push({id,price,provisional:mode==="addon"});
  }
- const tier=flow.length===0?(type[0]==="automation"?0:-1):flow.length===1?0:flow.length<=3?1:2;
+ const neededTier=flow.length===0?-1:flow.length===1?0:flow.length<=3?1:2;
+ const tier=type[0]==="automation"?Math.max(0,Number.isInteger(config.auto)&&config.auto>=0&&config.auto<=2?config.auto:0,neededTier):neededTier;
  const automation=tier<0?0:prices.automation[tier];
  const recurring=webIndex>=0&&config.care>=0?prices.maintenance[config.care]:0;
  return {webIndex,base,lines,pending,included,flow,tier,automation,recurring,total:base+automation+lines.reduce((s,l)=>s+l.price,0)};
 }
-g.JBProjectCatalog={...catalog,rules,hints,availableModules,availableCategories,calculate};})(window);
+g.JBProjectCatalog={...catalog,profiles,rules,hints,selectedProfile,includedModules,availableModules,availableCategories,calculate};})(window);
