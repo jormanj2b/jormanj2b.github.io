@@ -520,12 +520,288 @@
     ]
   ]
 };
+
+const rules={
+  "landing": {
+    "categories": [
+      "sales",
+      "integrations",
+      "automation",
+      "infra",
+      "growth"
+    ],
+    "modules": [
+      "booking",
+      "whatsapp-link",
+      "sheets",
+      "calendar",
+      "email",
+      "domain",
+      "hosting",
+      "seo"
+    ]
+  },
+  "corporate": {
+    "categories": [
+      "sales",
+      "admin",
+      "integrations",
+      "automation",
+      "ai",
+      "infra",
+      "growth",
+      "finance"
+    ],
+    "modules": [
+      "crm",
+      "booking",
+      "orders",
+      "whatsapp-link",
+      "dashboard",
+      "roles",
+      "reports",
+      "excel",
+      "audit-log",
+      "calendar",
+      "sheets",
+      "wordpress",
+      "supabase",
+      "api",
+      "email",
+      "reminders",
+      "alerts",
+      "whatsapp-api",
+      "n8n",
+      "chatbot",
+      "documents",
+      "classify",
+      "hosting",
+      "domain",
+      "backups",
+      "seo",
+      "research",
+      "currencies"
+    ]
+  },
+  "catalog": {
+    "categories": [
+      "sales",
+      "admin",
+      "finance",
+      "integrations",
+      "automation",
+      "infra",
+      "ai",
+      "growth"
+    ],
+    "modules": [
+      "orders",
+      "whatsapp-link",
+      "cart",
+      "dashboard",
+      "inventory",
+      "roles",
+      "excel",
+      "reports",
+      "rates",
+      "currencies",
+      "sheets",
+      "wordpress",
+      "supabase",
+      "api",
+      "email",
+      "alerts",
+      "whatsapp-api",
+      "hosting",
+      "domain",
+      "backups",
+      "chatbot",
+      "seo"
+    ]
+  },
+  "store": {
+    "categories": [
+      "sales",
+      "admin",
+      "finance",
+      "integrations",
+      "automation",
+      "infra",
+      "ai",
+      "growth"
+    ],
+    "modules": [
+      "crm",
+      "orders",
+      "whatsapp-link",
+      "dashboard",
+      "inventory",
+      "roles",
+      "excel",
+      "reports",
+      "audit-log",
+      "stripe",
+      "paypal",
+      "invoicing",
+      "rates",
+      "currencies",
+      "sheets",
+      "wordpress",
+      "supabase",
+      "api",
+      "email",
+      "alerts",
+      "whatsapp-api",
+      "n8n",
+      "hosting",
+      "domain",
+      "backups",
+      "chatbot",
+      "seo"
+    ]
+  },
+  "system": {
+    "categories": [
+      "admin",
+      "sales",
+      "integrations",
+      "automation",
+      "finance",
+      "ai",
+      "infra"
+    ],
+    "modules": [
+      "crm",
+      "booking",
+      "orders",
+      "dashboard",
+      "inventory",
+      "roles",
+      "excel",
+      "reports",
+      "audit-log",
+      "stripe",
+      "paypal",
+      "invoicing",
+      "rates",
+      "currencies",
+      "calendar",
+      "sheets",
+      "wordpress",
+      "supabase",
+      "api",
+      "email",
+      "reminders",
+      "alerts",
+      "whatsapp-api",
+      "n8n",
+      "chatbot",
+      "documents",
+      "classify",
+      "hosting",
+      "domain",
+      "backups"
+    ]
+  },
+  "automation": {
+    "categories": [
+      "automation",
+      "integrations",
+      "ai",
+      "infra"
+    ],
+    "modules": [
+      "calendar",
+      "sheets",
+      "wordpress",
+      "supabase",
+      "api",
+      "email",
+      "reminders",
+      "alerts",
+      "whatsapp-api",
+      "n8n",
+      "classify",
+      "hosting",
+      "backups"
+    ]
+  },
+  "chatbot": {
+    "categories": [
+      "ai",
+      "integrations",
+      "automation",
+      "infra"
+    ],
+    "modules": [
+      "documents",
+      "classify",
+      "api",
+      "sheets",
+      "wordpress",
+      "supabase",
+      "whatsapp-api",
+      "email",
+      "hosting"
+    ]
+  },
+  "existing": {
+    "categories": [
+      "sales",
+      "admin",
+      "finance",
+      "integrations",
+      "automation",
+      "ai",
+      "infra",
+      "growth"
+    ],
+    "modules": null
+  }
+};
+const hints={
+  "landing": [
+    "Para captar contactos: añade únicamente una agenda, un formulario conectado o canales de atención si los necesitas.",
+    "For capturing leads: add booking, connected forms or contact channels only if needed."
+  ],
+  "corporate": [
+    "Amplía tu sitio con gestión, captación o integraciones según los procesos de tu negocio.",
+    "Extend your site with management, lead capture or integrations that match your workflows."
+  ],
+  "catalog": [
+    "Prioriza productos, pedidos y actualización de existencias. El carrito es opcional.",
+    "Prioritize products, orders and stock updates. The cart is optional."
+  ],
+  "store": [
+    "El carrito ya está contemplado en la base. Elige pasarela, gestión y automatizaciones que necesites.",
+    "The cart is included in the base. Choose only the payment, management and automation features you need."
+  ],
+  "system": [
+    "Selecciona los procesos específicos que necesitas resolver; no es necesario contratar todos los módulos.",
+    "Select the specific processes you need to solve; you do not need every module."
+  ],
+  "automation": [
+    "Elige qué tareas conectar o automatizar. No necesitas contratar una nueva página web.",
+    "Choose the tasks you want to connect or automate. You do not need a new website."
+  ],
+  "chatbot": [
+    "El asistente web de preguntas frecuentes ya está incluido. Amplíalo con documentos, canales o conexiones solo si lo necesitas.",
+    "The web FAQ assistant is already included. Extend it with documents, channels or connections only if needed."
+  ],
+  "existing": [
+    "Selecciona cualquier módulo compatible con tu sitio actual. Revisaremos la compatibilidad antes de contratar.",
+    "Choose any module relevant to your current site. Compatibility will be checked before contracting."
+  ]
+};
+function availableModules(type,catalog){const rule=rules[type];if(!rule)return [];return catalog.modules.filter(m=>rule.modules===null||rule.modules.includes(m[0]));}
+function availableCategories(type,catalog){const ids=new Set(availableModules(type,catalog).map(m=>m[1]));return (rules[type]?.categories||[]).map(id=>catalog.categories.find(cat=>cat[0]===id)).filter(cat=>cat&&ids.has(cat[0]));}
 function calculate(config,catalog,prices){
  const type=catalog.types.find(t=>t[0]===config.type);
  if(!type)throw Error("Invalid type");
  const webIndex=type[3]>=0?config.web:-1;
  const base=webIndex>=0?prices.web[webIndex]:(type[5]||0);
- const selected=new Set(config.modules),lines=[],pending=[],included=[],flow=[];
+ const allowed=new Set(availableModules(type[0],catalog).map(m=>m[0]));
+ const selected=new Set(config.modules.filter(id=>allowed.has(id))),lines=[],pending=[],included=[],flow=[];
  if(type[4])pending.push("base:"+type[0]);
  for(const m of catalog.modules){
   if(!selected.has(m[0]))continue;
@@ -540,4 +816,4 @@ function calculate(config,catalog,prices){
  const recurring=webIndex>=0&&config.care>=0?prices.maintenance[config.care]:0;
  return {webIndex,base,lines,pending,included,flow,tier,automation,recurring,total:base+automation+lines.reduce((s,l)=>s+l.price,0)};
 }
-g.JBProjectCatalog={...catalog,calculate};})(window);
+g.JBProjectCatalog={...catalog,rules,hints,availableModules,availableCategories,calculate};})(window);
