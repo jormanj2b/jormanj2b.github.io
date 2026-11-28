@@ -72,7 +72,7 @@ main .preview-fallback { color: var(--muted); }
 #contacto .fields textarea{min-height:80px}
 #contacto .captcha-row{display:grid;gap:6px;justify-items:start;margin:12px 0 8px}
 #contacto #captcha-widget{width:100%;max-width:100%;overflow:visible;min-height:0}
-#contacto #captcha-widget:empty,#contacto #captcha-status:empty{display:none}
+#contacto #captcha-status:empty{display:none}
 #contacto #captcha-status{margin:0}
 #contacto .form .form-privacy{margin:8px 0 12px;font-size:12px;line-height:1.5;color:var(--muted)}
 #contacto .form .form-privacy a{color:var(--terracotta);font-weight:650}
