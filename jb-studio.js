@@ -24,7 +24,7 @@ form.addEventListener('submit',async e=>{
  if(!token){loadCaptcha();formMessage(message('Completa la verificación de seguridad antes de enviar.','Complete the security check before sending.'),true);captchaBox.scrollIntoView({block:'nearest'});return;}
  sending=true;sendButton.disabled=true;sendButton.textContent=message('Enviando…','Sending…');$('#result').hidden=true;
  try{
- const payload={name:String(f.get('name')||'').trim(),business:String(f.get('business')||'').trim(),email:String(f.get('email')||'').trim(),service:$('#select').selectedOptions[0].textContent,plan:$('#planSelect').selectedOptions[0]?.textContent||d.planNone,message:String(f.get('notes')||'').trim(),language:lang,_subject:'JB Studio — Nueva solicitud / New inquiry',_gotcha:'','g-recaptcha-response':token};
+ const payload={name:String(f.get('name')||'').trim(),business:String(f.get('business')||'').trim(),email:String(f.get('email')||'').trim(),service:$('#select').selectedOptions[0].textContent,plan:$('#planSelect').selectedOptions[0]?.textContent||d.planNone,message:String(f.get('notes')||'').trim(),projectEstimate:document.getElementById('jb-quote-summary')?.value||'',language:lang,_subject:'JB Studio — Nueva solicitud / New inquiry',_gotcha:'','g-recaptcha-response':token};
  const res=await fetch('https://formspree.io/f/mkjredvr',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)});
  const result=await res.json();if(!res.ok||result.ok!==true)throw Error('Submission not confirmed');
  form.reset();renderPlanSelect();validateFields();formMessage(d.success,false);
