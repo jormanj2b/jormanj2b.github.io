@@ -1,40 +1,52 @@
-/* JB Studio: reusable quote catalog, not production backend modules. Add-on amounts are proposed starting prices. */
+/* JB Studio public quote catalog. USD starting prices for limited scope; no backend credentials. */
 (function(g){'use strict';const catalog={
   "types": [
     [
       "landing",
       "Landing page",
       "Landing page",
-      0,
-      false
+      -1,
+      false,
+      220,
+      "Landing express de una página, hasta 5 secciones, formulario básico; sin CMS ni hosting comercial.",
+      "Express one-page site, up to 5 sections, basic form; no CMS or commercial hosting."
     ],
     [
       "corporate",
       "Web corporativa",
       "Business website",
-      1,
+      0,
       false
     ],
     [
       "catalog",
       "Catálogo digital",
       "Digital catalog",
-      1,
-      false
+      -1,
+      false,
+      290,
+      "Catálogo inicial de hasta 15 productos, contenido suministrado y contacto; sin carrito ni panel.",
+      "Starter catalog of up to 15 supplied products and contact; no cart or dashboard."
     ],
     [
       "store",
       "Tienda online",
       "Online store",
       -1,
-      true
+      false,
+      590,
+      "Tienda inicial basada en plataforma compatible, hasta 15 productos y carrito; pagos, inventario avanzado y licencias aparte.",
+      "Starter store on a compatible platform, up to 15 products and cart; payments, advanced stock and licenses separate."
     ],
     [
       "system",
       "Sistema a medida",
       "Custom system",
       -1,
-      true
+      false,
+      850,
+      "Sistema piloto de un proceso y alcance limitado; no equivale a un ERP completo.",
+      "Pilot system for one limited-scope process; not a full ERP."
     ],
     [
       "automation",
@@ -48,7 +60,10 @@
       "Chatbot empresarial",
       "Business chatbot",
       -1,
-      true
+      false,
+      180,
+      "Asistente web básico de preguntas frecuentes con una fuente de información; consumo, infraestructura y canales adicionales aparte.",
+      "Basic web FAQ assistant with one knowledge source; usage, infrastructure and additional channels separate."
     ],
     [
       "existing",
@@ -109,7 +124,7 @@
       "Contactos, etiquetas y seguimiento básico.",
       "Contacts, tags and basic follow-up.",
       "addon",
-      180
+      150
     ],
     [
       "booking",
@@ -119,7 +134,7 @@
       "Agenda, disponibilidad y solicitudes de cita.",
       "Calendar, availability and booking requests.",
       "addon",
-      180
+      130
     ],
     [
       "orders",
@@ -129,7 +144,7 @@
       "Registro y estados de pedidos.",
       "Order records and status tracking.",
       "addon",
-      200
+      160
     ],
     [
       "cart",
@@ -139,7 +154,7 @@
       "Carrito básico; no incluye pasarela ni impuestos.",
       "Basic cart; excludes payment gateway and tax logic.",
       "addon",
-      150
+      120
     ],
     [
       "whatsapp-link",
@@ -149,7 +164,7 @@
       "Envía un resumen de pedido a un número del negocio.",
       "Send an order summary to the business number.",
       "addon",
-      60
+      45
     ],
     [
       "dashboard",
@@ -159,7 +174,7 @@
       "Gestión básica de contenido y registros; alcance acordado.",
       "Basic content and record management; agreed scope.",
       "addon",
-      220
+      180
     ],
     [
       "inventory",
@@ -169,7 +184,7 @@
       "Productos, existencias y movimientos básicos.",
       "Products, stock and basic movements.",
       "addon",
-      220
+      160
     ],
     [
       "roles",
@@ -179,7 +194,7 @@
       "Autenticación y roles básicos; revisión de seguridad.",
       "Authentication and basic roles; security review.",
       "addon",
-      180
+      130
     ],
     [
       "excel",
@@ -189,7 +204,7 @@
       "Un formato de archivo y validación de registros.",
       "One file format and record validation.",
       "addon",
-      90
+      75
     ],
     [
       "reports",
@@ -199,7 +214,7 @@
       "Resumen de métricas acordadas.",
       "Summary of agreed metrics.",
       "addon",
-      150
+      110
     ],
     [
       "audit-log",
@@ -209,27 +224,27 @@
       "Registro de acciones administrativas.",
       "Log of administrative actions.",
       "addon",
-      120
+      90
     ],
     [
       "stripe",
       "finance",
       "Stripe",
       "Stripe",
-      "Pasarela sujeta a elegibilidad y cuenta del cliente.",
-      "Gateway subject to eligibility and client account.",
-      "custom",
-      null
+      "Una pasarela compatible, cuenta elegible del cliente; comisiones y validación aparte.",
+      "One compatible gateway, eligible client account; fees and verification separate.",
+      "addon",
+      120
     ],
     [
       "paypal",
       "finance",
       "PayPal",
       "PayPal",
-      "Integración según país y cuenta comercial.",
-      "Integration subject to country and merchant account.",
-      "custom",
-      null
+      "Una integración básica, sujeta a país y cuenta comercial; comisiones aparte.",
+      "One basic integration, subject to country and merchant account; fees separate.",
+      "addon",
+      120
     ],
     [
       "invoicing",
@@ -246,20 +261,20 @@
       "finance",
       "Tasa BCV / USDT",
       "BCV / USDT rates",
-      "Actualización desde fuentes verificadas; política de conversión acordada.",
-      "Updates from verified sources; agreed conversion policy.",
-      "custom",
-      null
+      "Una fuente de cambio compatible, sin garantía de disponibilidad; reglas y validación acordadas.",
+      "One compatible exchange-rate source, no uptime guarantee; agreed rules and validation.",
+      "addon",
+      85
     ],
     [
       "currencies",
       "finance",
       "Precios en varias monedas",
       "Multi-currency prices",
-      "Visualización y conversión según fuente y alcance.",
-      "Display and conversion subject to source and scope.",
-      "custom",
-      null
+      "Visualización de precios en dos monedas; no incluye conversión en el cobro.",
+      "Price display in two currencies; excludes payment conversion.",
+      "addon",
+      70
     ],
     [
       "calendar",
@@ -286,10 +301,10 @@
       "integrations",
       "WordPress / WooCommerce",
       "WordPress / WooCommerce",
-      "Conexión con sitio existente y plugins compatibles.",
-      "Connect an existing site and compatible plugins.",
-      "custom",
-      null
+      "Conexión básica con un plugin o sitio compatible; licencias y migraciones aparte.",
+      "Basic connection to one compatible plugin or site; licenses and migrations separate.",
+      "addon",
+      100
     ],
     [
       "supabase",
@@ -306,10 +321,10 @@
       "integrations",
       "API externa",
       "External API",
-      "Conexión según documentación, permisos y límites.",
-      "Connection subject to documentation, permissions and limits.",
-      "custom",
-      null
+      "Una integración sencilla con API documentada; permisos y costes de uso aparte.",
+      "One simple documented API integration; permissions and usage costs separate.",
+      "addon",
+      120
     ],
     [
       "email",
@@ -346,50 +361,50 @@
       "automation",
       "WhatsApp Business API",
       "WhatsApp Business API",
-      "Mensajes con consentimiento y plantillas aprobadas.",
-      "Messages with consent and approved templates.",
-      "custom",
-      null
+      "Configuración básica de un flujo oficial con cuenta elegible; plantillas, consentimiento y tarifas de Meta aparte.",
+      "Basic setup of one official workflow with an eligible account; templates, consent and Meta fees separate.",
+      "addon",
+      150
     ],
     [
       "n8n",
       "automation",
       "Flujos personalizados con n8n",
       "Custom n8n workflows",
-      "Procesos de varias etapas y servicios externos.",
-      "Multi-step processes and external services.",
-      "custom",
-      null
+      "Un flujo personalizado sencillo en una instancia compatible; hosting y licencias aparte.",
+      "One simple custom workflow on a compatible instance; hosting and licenses separate.",
+      "addon",
+      150
     ],
     [
       "chatbot",
       "ai",
       "Chatbot empresarial",
       "Business chatbot",
-      "Implementación, límites y fuentes de información acordados.",
-      "Implementation, limits and knowledge sources agreed.",
-      "custom",
-      null
+      "Asistente web básico de preguntas frecuentes; consumo, hosting y canales adicionales aparte.",
+      "Basic web FAQ assistant; usage, hosting and additional channels separate.",
+      "addon",
+      180
     ],
     [
       "documents",
       "ai",
       "Asistente de documentos",
       "Document assistant",
-      "Consulta de documentos autorizados y control de acceso.",
-      "Query authorized documents with access controls.",
-      "custom",
-      null
+      "Consulta básica de un conjunto limitado de documentos autorizados; consumo y almacenamiento aparte.",
+      "Basic search over a limited set of authorized documents; usage and storage separate.",
+      "addon",
+      250
     ],
     [
       "classify",
       "ai",
       "Clasificación de solicitudes",
       "Inquiry classification",
-      "Extracción o clasificación con revisión humana.",
-      "Extraction or classification with human review.",
-      "custom",
-      null
+      "Un flujo sencillo de clasificación con revisión humana; consumo del modelo aparte.",
+      "One simple classification workflow with human review; model usage separate.",
+      "addon",
+      120
     ],
     [
       "hosting",
@@ -406,20 +421,20 @@
       "infra",
       "Dominio y SSL",
       "Domain & SSL",
-      "Renovación y costes del proveedor por separado.",
-      "Renewals and provider costs separate.",
-      "custom",
-      null
+      "Configuración independiente de dominio y SSL compatible; registro, renovación y alojamiento aparte.",
+      "Standalone compatible domain and SSL setup; registration, renewal and hosting separate.",
+      "addon",
+      35
     ],
     [
       "backups",
       "infra",
       "Copias de seguridad",
       "Backups",
-      "Frecuencia, retención y recuperación por definir.",
-      "Frequency, retention and recovery to be agreed.",
-      "custom",
-      null
+      "Configuración básica de copias en un entorno compatible; almacenamiento recurrente aparte.",
+      "Basic backup setup in a compatible environment; recurring storage separate.",
+      "addon",
+      70
     ],
     [
       "seo",
@@ -509,20 +524,18 @@ function calculate(config,catalog,prices){
  const type=catalog.types.find(t=>t[0]===config.type);
  if(!type)throw Error("Invalid type");
  const webIndex=type[3]>=0?config.web:-1;
- const base=webIndex>=0?prices.web[webIndex]:0;
- const selected=new Set(config.modules);
- const lines=[],pending=[],included=[],flow=[];
- if(type[4])pending.push(type[0]==="chatbot"?"chatbot":"base:"+type[0]);
+ const base=webIndex>=0?prices.web[webIndex]:(type[5]||0);
+ const selected=new Set(config.modules),lines=[],pending=[],included=[],flow=[];
+ if(type[4])pending.push("base:"+type[0]);
  for(const m of catalog.modules){
   if(!selected.has(m[0]))continue;
   const [id,,,,,,mode,price]=m;
-  if(type[0]==="chatbot"&&id==="chatbot"){included.push(id);continue;}
-  if(webIndex===2&&["dashboard","booking"].includes(id)){included.push(id);continue;}
+  if((type[0]==="chatbot"&&id==="chatbot")||(type[0]==="store"&&id==="cart")||(webIndex>=0&&id==="domain")||(webIndex===2&&["dashboard","booking"].includes(id))){included.push(id);continue;}
   if(mode==="flow")flow.push(id);
   else if(mode==="custom")pending.push(id);
   else lines.push({id,price,provisional:mode==="addon"});
  }
- const tier=flow.length===0?-1:flow.length===1?0:flow.length<=3?1:2;
+ const tier=flow.length===0?(type[0]==="automation"?0:-1):flow.length===1?0:flow.length<=3?1:2;
  const automation=tier<0?0:prices.automation[tier];
  const recurring=webIndex>=0&&config.care>=0?prices.maintenance[config.care]:0;
  return {webIndex,base,lines,pending,included,flow,tier,automation,recurring,total:base+automation+lines.reduce((s,l)=>s+l.price,0)};
