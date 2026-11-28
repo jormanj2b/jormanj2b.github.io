@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  <url>
-    <loc>https://jormanbravo.com/</loc>
-    <lastmod>2026-11-27</lastmod>
-    <xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/"/>
-  </url>
-  <url>
-    <loc>https://jormanbravo.com/en/</loc>
-    <lastmod>2026-11-27</lastmod>
-    <xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/"/>
-  </url>
-  <url><loc>https://jormanbravo.com/proyectos/</loc></url>
-  <url><loc>https://jormanbravo.com/servicios/</loc></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<url><loc>https://jormanbravo.com/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/"/></url>
+<url><loc>https://jormanbravo.com/en/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/"/></url>
+<url><loc>https://jormanbravo.com/servicios/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/servicios/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/services/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/servicios/"/></url>
+<url><loc>https://jormanbravo.com/en/services/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/servicios/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/services/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/servicios/"/></url>
+<url><loc>https://jormanbravo.com/servicios/wordpress/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/servicios/wordpress/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/services/wordpress/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/servicios/wordpress/"/></url>
+<url><loc>https://jormanbravo.com/en/services/wordpress/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/servicios/wordpress/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/services/wordpress/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/servicios/wordpress/"/></url>
+<url><loc>https://jormanbravo.com/servicios/prospeccion/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/servicios/prospeccion/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/services/lead-research/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/servicios/prospeccion/"/></url>
+<url><loc>https://jormanbravo.com/en/services/lead-research/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/servicios/prospeccion/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/services/lead-research/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/servicios/prospeccion/"/></url>
+<url><loc>https://jormanbravo.com/servicios/auditorias/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/servicios/auditorias/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/services/website-audits/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/servicios/auditorias/"/></url>
+<url><loc>https://jormanbravo.com/en/services/website-audits/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/servicios/auditorias/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/services/website-audits/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/servicios/auditorias/"/></url>
+<url><loc>https://jormanbravo.com/servicios/automatizacion/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/servicios/automatizacion/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/services/automation/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/servicios/automatizacion/"/></url>
+<url><loc>https://jormanbravo.com/en/services/automation/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/servicios/automatizacion/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/services/automation/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/servicios/automatizacion/"/></url>
+<url><loc>https://jormanbravo.com/servicios/contenido/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/servicios/contenido/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/services/digital-content/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/servicios/contenido/"/></url>
+<url><loc>https://jormanbravo.com/en/services/digital-content/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/servicios/contenido/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/services/digital-content/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/servicios/contenido/"/></url>
+<url><loc>https://jormanbravo.com/agencias/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/agencias/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/agencies/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/agencias/"/></url>
+<url><loc>https://jormanbravo.com/en/agencies/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/agencias/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/agencies/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/agencias/"/></url>
+<url><loc>https://jormanbravo.com/proyectos/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/proyectos/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/projects/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/proyectos/"/></url>
+<url><loc>https://jormanbravo.com/en/projects/</loc><lastmod>2026-11-28</lastmod><xhtml:link rel="alternate" hreflang="es" href="https://jormanbravo.com/proyectos/"/><xhtml:link rel="alternate" hreflang="en" href="https://jormanbravo.com/en/projects/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://jormanbravo.com/proyectos/"/></url>
 </urlset>
