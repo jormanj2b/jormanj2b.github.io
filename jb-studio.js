@@ -10,7 +10,7 @@ function loadCaptcha(){
  if(captchaLoading||captchaId!==null)return;
  captchaLoading=true;captchaLoad.disabled=true;captchaMessage(message('Cargando verificación…','Loading security check…'));
  const failed=()=>{captchaLoading=false;captchaLoad.disabled=false;captchaLoad.hidden=false;if(captchaScript){captchaScript.remove();captchaScript=null;}captchaMessage(message('No se pudo cargar la verificación. Reintenta.','Could not load the verification. Please retry.'));};
- window.jbCaptchaReady=()=>{try{captchaId=window.grecaptcha.render(captchaBox,{sitekey:captchaBox.dataset.sitekey,size:captchaBox.clientWidth<304?'compact':'normal',callback:()=>captchaMessage(''),'expired-callback':()=>captchaMessage(message('Verificación caducada. Inténtalo de nuevo.','Verification expired. Please try again.')),'error-callback':()=>captchaMessage(message('Verificación no disponible. Reintenta.','Verification unavailable. Try again.'))});captchaLoading=false;captchaLoad.hidden=true;captchaMessage('');}catch(err){failed();}};
+ window.jbCaptchaReady=()=>{try{captchaId=window.grecaptcha.render(captchaBox,{sitekey:captchaBox.dataset.sitekey,size:captchaBox.parentElement.clientWidth<310?'compact':'normal',callback:()=>captchaMessage(''),'expired-callback':()=>captchaMessage(message('Verificación caducada. Inténtalo de nuevo.','Verification expired. Please try again.')),'error-callback':()=>captchaMessage(message('Verificación no disponible. Reintenta.','Verification unavailable. Try again.'))});captchaLoading=false;captchaLoad.hidden=true;captchaMessage('');}catch(err){failed();}};
  captchaScript=document.createElement('script');captchaScript.src='https://www.google.com/recaptcha/api.js?onload=jbCaptchaReady&render=explicit&hl='+lang;captchaScript.async=true;captchaScript.onerror=failed;document.head.appendChild(captchaScript);
 }
 captchaLoad.addEventListener('click',loadCaptcha);
@@ -42,3 +42,36 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)r
 render();
 
 if(location.hash==='#agenda'){history.replaceState(null,'','#contacto');document.getElementById('contacto').scrollIntoView();}
+
+/* JB Studio 1.5 — progressive entrance on scroll, no pre-hidden content. */
+(function setupScrollReveal(){
+ if(!('IntersectionObserver' in window)||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const selectors='main .section-head, main section > .wrap > h2, main .service, main .pack, main .bundle, main .project, main .process > div, main .about, main .contact-copy, main .form, main .goal-selector, main .plan-card, main .maintenance-card, main .standards, main .faq details';
+ const seen=new WeakSet(),pending=new Set();
+ const observer=new IntersectionObserver(entries=>{
+   entries.forEach(entry=>{
+     if(!entry.isIntersecting)return;
+     const el=entry.target;observer.unobserve(el);pending.delete(el);seen.add(el);
+     if(!el.isConnected||el.hidden||el.closest('[hidden]')||el.matches(':focus-within')||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+     el.classList.add('jb-enter');
+     el.addEventListener('animationend',()=>el.classList.remove('jb-enter'),{once:true});
+   });
+ },{threshold:0,rootMargin:'0px 0px -20px 0px'});
+ function scan(){
+   pending.forEach(el=>{if(!el.isConnected||el.hidden||el.closest('[hidden]')){observer.unobserve(el);pending.delete(el);}});
+   document.querySelectorAll(selectors).forEach(el=>{
+     if(seen.has(el)||pending.has(el)||el.hidden||el.closest('[hidden]'))return;
+     const rect=el.getBoundingClientRect();
+     if(!rect.height)return;
+     if(rect.top<window.innerHeight){seen.add(el);return;}
+     pending.add(el);observer.observe(el);
+   });
+ }
+ scan();
+ if('MutationObserver' in window){
+   const watcher=new MutationObserver(scan);
+   ['services','packs','projects','process','planGrid','maintenanceGrid','faq'].forEach(id=>{
+      const el=document.getElementById(id);if(el)watcher.observe(el,{childList:true});
+   });
+ }
+})();
