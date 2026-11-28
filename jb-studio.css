@@ -98,3 +98,13 @@ footer .legal-links{gap:8px 12px}
 footer .legal-links a,footer .legal-links button,footer a[data-t="back"]{display:inline-flex;align-items:center;min-height:44px;min-width:44px;box-sizing:border-box;padding:8px 4px;line-height:1.4}
 footer .legal-links a:focus-visible,footer .legal-links button:focus-visible,footer a[data-t="back"]:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:3px}
 .system h2.sys-title{letter-spacing:-.018em}
+
+/* Contact form validation and privacy acknowledgment. */
+#contacto .form .contact-error{color:#a33424;font-size:12px;font-weight:600;line-height:1.45;margin:2px 0 0;display:block}
+#contacto .form [aria-invalid="true"]:not([type=checkbox]){border-color:#a33424}
+#contacto .form .contact-privacy{margin:16px 0 12px;padding-top:12px;border-top:1px solid var(--line)}
+#contacto .form .contact-privacy .form-privacy{margin:0 0 10px}
+#contacto .form .privacy-check{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.55;font-weight:500;cursor:pointer;color:var(--ink)}
+#contacto .form .privacy-check input[type=checkbox]{flex:0 0 16px;width:16px;height:16px;min-height:16px;margin:2px 0 0;padding:0;accent-color:var(--blue)}
+#contacto .form .privacy-check input[aria-invalid="true"]{outline:1px solid #a33424;outline-offset:2px}
+#contacto .form .contact-error[hidden]{display:none!important}
