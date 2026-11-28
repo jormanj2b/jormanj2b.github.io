@@ -79,12 +79,16 @@ main .preview-fallback { color: var(--muted); }
 #contacto .form button[type=submit]{min-height:44px}
 @media(max-width:960px){#contacto .contact-grid{grid-template-columns:minmax(0,1fr);gap:22px}#contacto .contact-next{margin-top:18px;padding-top:14px}}
 @media(max-width:600px){#contacto{padding-block:38px}#contacto .contact-next ol{gap:8px}#contacto .fields{grid-template-columns:minmax(0,1fr);gap:10px}#contacto .form button[type=submit]{width:100%}#contacto .contact-copy .micro{max-width:none}}
-/* Content remains visible if JavaScript or IntersectionObserver is unavailable. */
-@keyframes jb-reveal-in{from{opacity:.15;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+
+/* 1.6 — visible scroll entrance; initial content is never hidden without JS. */
 @media(prefers-reduced-motion:no-preference){
-  main .jb-enter{animation:jb-reveal-in .48s cubic-bezier(.22,.68,.35,1) both}
-  main .jb-enter:nth-child(3n+2){animation-delay:55ms}
-  main .jb-enter:nth-child(3n+3){animation-delay:110ms}
-  main .jb-enter:focus-within{animation:none}
+  main .jb-reveal-pending{opacity:0;transform:translate3d(0,30px,0)}
+  main .jb-reveal-shown{opacity:1;transform:translate3d(0,0,0);transition:opacity .68s ease-out,transform .72s cubic-bezier(.2,.7,.25,1)}
+  main .jb-reveal-shown:nth-child(3n+2){transition-delay:70ms}
+  main .jb-reveal-shown:nth-child(3n+3){transition-delay:140ms}
+  main .jb-reveal-pending:focus-within, main .jb-reveal-shown:focus-within{opacity:1;transform:none;transition:none}
 }
-@media(prefers-reduced-motion:reduce){main .jb-enter{animation:none!important;opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){
+  main .jb-reveal-pending,main .jb-reveal-shown{opacity:1!important;transform:none!important;transition:none!important}
+}
+@media print{main .jb-reveal-pending,main .jb-reveal-shown{opacity:1!important;transform:none!important;transition:none!important}}
