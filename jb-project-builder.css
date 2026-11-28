@@ -43,3 +43,8 @@
 #jb-quote-clear{background:none;border:0;color:var(--blue);font-size:13px;font-weight:700;padding:10px 0;min-height:44px}
 #jb-pb-status{margin-bottom:0}
 @media(max-width:600px){.jb-pb-types{grid-template-columns:1fr}.jb-pb-tabs{gap:5px}.jb-pb-tabs button{flex:1 1 45%}}
+
+/* Contextual project guidance */
+.jb-pb-context{border-left:3px solid var(--blue);padding:10px 12px;background:var(--bg);border-radius:0 5px 5px 0;margin:12px 0 16px;font-size:13px!important}
+#jb-pb-filter-note{font-size:12px;color:var(--blue);margin:8px 0 0}#jb-pb-filter-note:empty{display:none}
+.jb-pb-tabs button[hidden],#jb-pb-monthly-label[hidden],#jb-pb-monthly[hidden]{display:none!important}
