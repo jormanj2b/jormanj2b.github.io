@@ -43,35 +43,68 @@ render();
 
 if(location.hash==='#agenda'){history.replaceState(null,'','#contacto');document.getElementById('contacto').scrollIntoView();}
 
-/* JB Studio 1.5 — progressive entrance on scroll, no pre-hidden content. */
+/* JB Studio 1.6 — explicit scroll position trigger. */
 (function setupScrollReveal(){
- if(!('IntersectionObserver' in window)||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
- const selectors='main .section-head, main section > .wrap > h2, main .service, main .pack, main .bundle, main .project, main .process > div, main .about, main .contact-copy, main .form, main .goal-selector, main .plan-card, main .maintenance-card, main .standards, main .faq details';
- const seen=new WeakSet(),pending=new Set();
- const observer=new IntersectionObserver(entries=>{
-   entries.forEach(entry=>{
-     if(!entry.isIntersecting)return;
-     const el=entry.target;observer.unobserve(el);pending.delete(el);seen.add(el);
-     if(!el.isConnected||el.hidden||el.closest('[hidden]')||el.matches(':focus-within')||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-     el.classList.add('jb-enter');
-     el.addEventListener('animationend',()=>el.classList.remove('jb-enter'),{once:true});
-   });
- },{threshold:0,rootMargin:'0px 0px -20px 0px'});
- function scan(){
-   pending.forEach(el=>{if(!el.isConnected||el.hidden||el.closest('[hidden]')){observer.unobserve(el);pending.delete(el);}});
-   document.querySelectorAll(selectors).forEach(el=>{
-     if(seen.has(el)||pending.has(el)||el.hidden||el.closest('[hidden]'))return;
-     const rect=el.getBoundingClientRect();
-     if(!rect.height)return;
-     if(rect.top<window.innerHeight){seen.add(el);return;}
-     pending.add(el);observer.observe(el);
-   });
+ const preference=window.matchMedia('(prefers-reduced-motion: reduce)');
+ if(preference.matches)return;
+ const selector='main .section-head, main section > .wrap > .eyebrow, main section > .wrap > h2, main section > .wrap > .intro, main .service, main .pack, main .bundle, main .project, main .process > div, main .about, main .contact-copy, main .form, main .goal-selector, main .plan-card, main .maintenance-card, main .standards, main .faq details';
+ const seen=new WeakSet(), pending=new Set();
+ let queued=false, disabled=false;
+ function show(el,animate){
+   pending.delete(el);seen.add(el);
+   if(animate)el.classList.add('jb-reveal-shown');
+   el.classList.remove('jb-reveal-pending');
+   if(animate){
+     const done=()=>{el.classList.remove('jb-reveal-shown');};
+     el.addEventListener('transitionend',done,{once:true});
+     window.setTimeout(done,1000);
+   }
  }
+ function failOpen(){
+   disabled=true;
+   pending.forEach(el=>show(el,false));
+ }
+ function tick(){
+   queued=false;if(disabled)return;
+   try{
+     if(preference.matches){failOpen();return;}
+     const vh=window.innerHeight||document.documentElement.clientHeight;
+     pending.forEach(el=>{
+       if(!el.isConnected||el.closest('[hidden]')){pending.delete(el);el.classList.remove('jb-reveal-pending');return;}
+       const r=el.getBoundingClientRect();
+       if(r.top<=vh*.84||el.matches(':focus-within'))show(el,!el.matches(':focus-within')&&r.bottom>0);
+     });
+   }catch(e){failOpen();}
+ }
+ function schedule(){
+   if(queued||disabled)return;queued=true;window.requestAnimationFrame(tick);
+ }
+ function scan(){
+   if(disabled)return;
+   try{
+     const vh=window.innerHeight||document.documentElement.clientHeight;
+     document.querySelectorAll(selector).forEach(el=>{
+       if(seen.has(el)||pending.has(el)||el.closest('[hidden]'))return;
+       const r=el.getBoundingClientRect();
+       if(!r.height)return;
+       if(r.top<vh||el.matches(':focus-within')){seen.add(el);return;}
+       pending.add(el);el.classList.add('jb-reveal-pending');
+     });
+     schedule();
+   }catch(e){failOpen();}
+ }
+ // Listen to real scrolling as well as resize and anchor jumps.
+ window.addEventListener('scroll',schedule,{passive:true});
+ window.addEventListener('resize',schedule,{passive:true});
+ window.addEventListener('hashchange',schedule);
+ window.addEventListener('pageshow',schedule);
+ document.addEventListener('focusin',schedule);
+ if(preference.addEventListener)preference.addEventListener('change',()=>{if(preference.matches)failOpen();});
  scan();
  if('MutationObserver' in window){
    const watcher=new MutationObserver(scan);
    ['services','packs','projects','process','planGrid','maintenanceGrid','faq'].forEach(id=>{
-      const el=document.getElementById(id);if(el)watcher.observe(el,{childList:true});
+     const el=document.getElementById(id);if(el)watcher.observe(el,{childList:true});
    });
  }
 })();
