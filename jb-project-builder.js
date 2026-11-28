@@ -7,7 +7,7 @@ const en=document.documentElement.lang==='en',tr=(a,b)=>en?b:a,d=data[en?'en':'e
 const esc=s=>String(s).replace(/[&<>"']/g,v=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[v]));
 const money=n=>'$'+Number(n).toLocaleString('en-US')+' USD',name=m=>m[en?3:2],typeName=t=>t[en?2:1],byId=id=>c.modules.find(m=>m[0]===id);
 const prices={web:d.plans.web.map(x=>x[1]),automation:d.plans.automation.map(x=>x[1]),maintenance:d.maintenance.map(x=>x[1])};
-const state={type:'corporate',web:0,auto:0,sector:-1,modules:[],care:-1};
+const state={type:'corporate',web:0,auto:0,sector:-1,modules:[],care:-1};let planChosen=false;
 const type=()=>c.types.find(t=>t[0]===state.type),profile=()=>c.selectedProfile(state);
 const option=(val,label)=>'<option value="'+val+'">'+esc(label)+'</option>';
 const planOptions=rows=>rows.map((r,i)=>option(i,r[0]+' · '+money(r[1]))).join('');
@@ -53,7 +53,7 @@ function refresh(redraw=false){
  preset.value=String(state.sector);typeSelect.innerHTML=typesForSector().map(t=>option(t[0],typeName(t))).join('');typeSelect.value=state.type;
  web.value=String(state.web);auto.value=String(state.type==='automation'?r.tier:state.auto);care.value=String(state.care);
  q('#jb-pb-web-card').hidden=t[3]<0;q('#jb-pb-auto-card').hidden=t[0]!=='automation';q('#jb-pb-care-card').hidden=t[3]<0;
- q('#jb-pb-context').textContent=c.hints[state.type][en?1:0];
+ q('#jb-pb-context').textContent=c.hints[state.type][en?1:0]+(state.type==='automation'&&r.tier>state.auto?' '+tr('Los flujos elegidos requieren el nivel '+ap[0]+'.','The selected workflows require '+ap[0]+'.'):'');
  q('#jb-pb-scope-title').textContent=p?c.presets[state.sector][en?1:0]+' · '+(wp?wp[0]:typeName(t)):wp?wp[0]:t[0]==='automation'?ap[0]:typeName(t);
  const scope=wp?wp[2]:t[0]==='automation'?ap[2]:t[5]?[t[en?7:6]]:[tr('Revisión de compatibilidad del sitio existente.','Existing website compatibility review.')];
  q('#jb-pb-scope').innerHTML=list([...scope,...(p?p[en?'en':'es']:[])]);
@@ -61,7 +61,7 @@ function refresh(redraw=false){
  if(redraw)renderExtras();
  q('#jb-pb-selected').textContent=state.modules.length+' '+tr('extras elegidos','extras selected');
  const line=(a,b)=>'<div class="jb-breakdown-line"><span>'+esc(a)+'</span><b>'+esc(b)+'</b></div>';
- q('#jb-pb-lines').innerHTML=(wp?line(typeName(t)+' · '+wp[0],money(r.base)):r.base?line(typeName(t),money(r.base)):'')+(ap?line(tr('Automatización','Automation')+' · '+ap[0],money(r.automation)):'')+r.lines.map(l=>line(name(byId(l.id)),money(l.price))).join('')+(r.included.length?line(tr('Funcionalidades incluidas','Included features'),tr('Sin coste adicional','No extra cost')):'');
+ q('#jb-pb-lines').innerHTML=(wp?line(typeName(t)+' · '+wp[0],money(r.base)):r.base?line(typeName(t),money(r.base)):'')+(ap?line(tr('Automatización','Automation')+' · '+ap[0],money(r.automation)):'')+r.flow.map(id=>line(name(byId(id)),tr('En plan','In plan'))).join('')+r.lines.map(l=>line(name(byId(l.id)),money(l.price))).join('')+(r.included.length?line(tr('Funcionalidades incluidas','Included features'),tr('Sin coste adicional','No extra cost')):'');
  q('#jb-pb-total').textContent=r.total?tr('Desde ','From ')+money(r.total):tr('Por cotizar','To be quoted');
  q('#jb-pb-monthly').textContent=t[3]>=0&&r.recurring?tr('Después del mes incluido: ','After the included month: ')+money(r.recurring)+tr('/mes','/mo'):'';
  q('#jb-pb-custom-note').textContent=r.pending.length?tr('Pendiente de cotizar: ','To be quoted: ')+r.pending.map(id=>id.startsWith('base:')?typeName(t):name(byId(id))).join(', '):'';
@@ -70,18 +70,18 @@ function refresh(redraw=false){
  last={r,wp,ap,ai};
 }
 function clearOpen(){q('#jb-pb-modules').querySelectorAll('details').forEach(el=>el.open=false);}
-function setType(id){state.type=id;state.web=Math.max(0,type()[3]);state.auto=0;state.care=-1;clearOpen();const removed=normalize();q('#jb-pb-filter-note').textContent=removed?tr('Ajustamos los extras al nuevo alcance.','Extras adjusted to the new scope.'):'';refresh(true);}
-function applyPreset(i){const p=c.presets[i];if(!p)return;state.sector=i;state.modules=[];state.type=c.profiles[i].preferred;state.web=0;state.auto=0;state.care=-1;clearOpen();q('#jb-pb-filter-note').textContent='';refresh(true);}
+function setType(id){state.type=id;planChosen=false;state.web=Math.max(0,type()[3]);state.auto=0;state.care=-1;clearOpen();const removed=normalize();q('#jb-pb-filter-note').textContent=removed?tr('Ajustamos los extras al nuevo alcance.','Extras adjusted to the new scope.'):'';refresh(true);}
+function applyPreset(i){const p=c.presets[i];if(!p)return;const keep=planChosen&&state.type==='corporate'&&c.profiles[i].types.includes('corporate');state.sector=i;state.modules=[];state.type=keep?'corporate':c.profiles[i].preferred;state.web=keep?state.web:0;state.auto=0;state.care=-1;clearOpen();q('#jb-pb-filter-note').textContent='';refresh(true);}
 root.addEventListener('change',e=>{
  const el=e.target;
  if(el===preset){const i=Number(el.value);if(i>=0)applyPreset(i);else{state.sector=-1;state.modules=[];setType('corporate');}return;}
  if(el===typeSelect){if(typesForSector().some(t=>t[0]===el.value))setType(el.value);return;}
- if(el===web){state.web=Number(web.value);const n=normalize();q('#jb-pb-filter-note').textContent=n?tr('El nuevo plan ya incluye '+n+' de tus extras; retiramos ese coste.','The new plan includes '+n+' of your extras; we removed those charges.'):'';refresh(true);return;}
+ if(el===web){planChosen=true;state.web=Number(web.value);const n=normalize();q('#jb-pb-filter-note').textContent=n?tr('El nuevo plan ya incluye '+n+' de tus extras; retiramos ese coste.','The new plan includes '+n+' of your extras; we removed those charges.'):'';refresh(true);return;}
  if(el===auto){state.auto=Number(auto.value);refresh(true);return;}
  if(el===care){state.care=Number(care.value);refresh();return;}
 });
 root.addEventListener('click',e=>{const b=e.target.closest('[data-pb-module]');if(!b)return;const id=b.dataset.pbModule;if(!applicable().some(m=>m[0]===id))return;state.modules=state.modules.includes(id)?state.modules.filter(x=>x!==id):[...state.modules,id];q('#jb-pb-filter-note').textContent='';refresh(true);q('[data-pb-module="'+id+'"]')?.focus({preventScroll:true});});
-root.addEventListener('input',e=>{if(!e.target.closest('#jb-pb-ai'))return;if(e.target.id==='jb-pb-volume-slider')q('#jb-pb-volume').value=e.target.value;if(e.target.id==='jb-pb-volume')q('#jb-pb-volume-slider').value=e.target.value;aiCost();const cost=aiCost();if(last)last.ai=cost;q('#jb-pb-ai-note').textContent=tr('IA: consumo separado y variable. ','AI: separate, variable usage. ')+(cost?tr('Ejemplo: ','Example: ')+cost:'');});
+root.addEventListener('input',e=>{if(!e.target.closest('#jb-pb-ai'))return;if(e.target.id==='jb-pb-volume-slider')q('#jb-pb-volume').value=e.target.value;if(e.target.id==='jb-pb-volume')q('#jb-pb-volume-slider').value=e.target.value;const cost=aiCost();if(last)last.ai=cost;q('#jb-pb-ai-note').textContent=tr('IA: consumo separado y variable. ','AI: separate, variable usage. ')+(cost?tr('Ejemplo: ','Example: ')+cost:'');});
 function summary(){
  const {r,wp,ap,ai}=last,p=profile();
  return ['JB / PROJECT PROPOSAL',tr('Proyecto: ','Project: ')+typeName(type()),p?tr('Sector: ','Industry: ')+c.presets[state.sector][en?1:0]:'',wp?tr('Plan web: ','Web plan: ')+wp[0]+' · '+money(r.base):r.base?typeName(type())+' · '+money(r.base):'',p?tr('Alcance sectorial: ','Industry scope: ')+p[en?'en':'es'].join('; '):'',ap?tr('Automatización: ','Automation: ')+ap[0]+' · '+money(r.automation)+(r.flow.length?' ('+r.flow.map(id=>name(byId(id))).join(', ')+')':''):'',...r.lines.map(l=>name(byId(l.id))+' · '+money(l.price)),r.included.length?tr('Incluido: ','Included: ')+r.included.map(id=>name(byId(id))).join(', '):'',r.pending.length?tr('Por cotizar: ','To be quoted: ')+r.pending.map(id=>id.startsWith('base:')?typeName(type()):name(byId(id))).join(', '):'',tr('Implementación estimada: ','Estimated implementation: ')+(r.total?money(r.total):tr('Por cotizar','To be quoted')),r.recurring?tr('Mantenimiento: ','Maintenance: ')+money(r.recurring)+tr('/mes','/mo'):'',isAI()?tr('IA: consumo separado, ilustrativo: ','AI: separate illustrative usage: ')+(ai||tr('Variable','Variable')):'',tr('Propuesta no contractual; alcance confirmado por escrito.','Non-binding proposal; scope confirmed in writing.')].filter(Boolean).join('\n');
@@ -98,7 +98,7 @@ const form=document.getElementById('form'),estimate=document.getElementById('jb-
 if(form&&estimate&&area){const clear=()=>{estimate.value='';area.hidden=true;};form.addEventListener('reset',clear);document.getElementById('jb-quote-clear')?.addEventListener('click',clear);form.addEventListener('change',e=>{if(['select','planSelect'].includes(e.target.id))clear();});}
 function openBrief(){document.getElementById('configurar').scrollIntoView();preset.focus({preventScroll:true});}
 window.JBOpenPlan=function(service,index){if(!['web','automation'].includes(service)||!Number.isInteger(index)||index<0||index>2)return false;
- if(service==='automation'){state.sector=-1;state.type='automation';state.auto=index;state.care=-1;}else{if(state.sector>=0&&!c.profiles[state.sector].types.includes('corporate'))state.sector=-1;state.type='corporate';state.web=index;state.care=-1;}
+ if(service==='automation'){if(state.type!=='automation')state.modules=[];state.sector=-1;state.type='automation';state.auto=index;state.care=-1;planChosen=false;}else{if(state.type!=='corporate')state.modules=[];planChosen=true;if(state.sector>=0&&!c.profiles[state.sector].types.includes('corporate'))state.sector=-1;state.type='corporate';state.web=index;state.care=-1;}
  normalize();clearOpen();q('#jb-pb-filter-note').textContent='';refresh(true);openBrief();return true;
 };
 function decorateProjects(){for(const card of document.querySelectorAll('#projects .project')){const anchor=card.querySelector('a[href]'),info=card.querySelector('.project-info');if(!anchor||!info||info.querySelector('.jb-pb-demo'))continue;const idx=['laborathorno-demo','demo-barberia','demo-cafe','demo-tienda','demo-asesoria','demo-gimnasio'].findIndex(p=>new URL(anchor.href,location.href).pathname.split('/').includes(p));if(idx<0)continue;const b=document.createElement('button');b.type='button';b.className='jb-pb-demo';b.textContent=tr('Personalizar esta solución →','Customize this solution →');b.addEventListener('click',()=>{applyPreset(idx);openBrief();});info.append(b);}}
