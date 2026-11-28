@@ -669,7 +669,8 @@ const rules={
       "backups",
       "seo",
       "research",
-      "currencies"
+      "currencies",
+      "inventory"
     ]
   },
   "catalog": {
@@ -848,6 +849,7 @@ const rules={
     "modules": null
   }
 };
+
 const hints={
   "landing": [
     "Para captar contactos: añade únicamente una agenda, un formulario conectado o canales de atención si los necesitas.",
