@@ -27,3 +27,19 @@
 .jb-pb-demo{display:block;background:none;border:0;color:var(--blue);font-weight:750;font-size:13px;text-align:left;padding:10px 0;min-height:44px}
 @media(max-width:960px){.jb-pb-layout{grid-template-columns:1fr}.jb-pb-summary{position:static}}
 @media(max-width:600px){.jb-pb-choices{grid-template-columns:1fr}.jb-pb-card,.jb-pb-summary{padding:17px}}
+
+/* Modular catalogue */
+.jb-pb-types{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0 20px}
+.jb-pb-card label.jb-pb-type{margin:0}.jb-pb-type{min-height:74px}
+.jb-pb-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0}
+.jb-pb-tabs button{background:var(--white);border:1px solid var(--line);border-radius:5px;padding:8px 11px;color:var(--ink);font-size:12px;font-weight:750;min-height:44px;text-align:left}
+.jb-pb-tabs button[aria-pressed=true]{background:var(--dark);color:var(--lime);border-color:var(--dark)}
+.jb-pb-tabs button span{font-family:ui-monospace,monospace}
+#jb-pb-selected{font-size:12px;margin-bottom:0}
+#jb-pb-copy{margin-top:8px}
+.jb-pb-ai-result{background:var(--bg);padding:12px;border-left:3px solid var(--blue);font-weight:700}
+#jb-quote-area{grid-column:1/-1;border:1px solid var(--line);border-radius:8px;padding:12px;background:var(--bg)}
+#jb-quote-area textarea{width:100%;min-height:132px;resize:vertical;font-size:13px}
+#jb-quote-clear{background:none;border:0;color:var(--blue);font-size:13px;font-weight:700;padding:10px 0;min-height:44px}
+#jb-pb-status{margin-bottom:0}
+@media(max-width:600px){.jb-pb-types{grid-template-columns:1fr}.jb-pb-tabs{gap:5px}.jb-pb-tabs button{flex:1 1 45%}}
